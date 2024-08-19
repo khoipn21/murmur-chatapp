@@ -52,7 +52,7 @@ function Register() {
 					borderRadius={4}
 					background="brandGray.light">
 					<Box textAlign="center">
-						<Heading fontSize="24px">Welcome to Valkyrie</Heading>
+						<Heading fontSize="24px">Welcome to Murmur</Heading>
 					</Box>
 					<Box
 						my={4}
