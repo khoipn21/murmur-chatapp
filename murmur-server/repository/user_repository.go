@@ -1,0 +1,87 @@
+package repository
+
+import (
+	"errors"
+	"gorm.io/gorm"
+	"log"
+	"murmur-server/model"
+	"murmur-server/model/apperrors"
+	"regexp"
+)
+
+type userRepository struct {
+	DB *gorm.DB
+}
+
+func NewUserRepository(db *gorm.DB) model.UserRepository {
+	return &userRepository{
+		DB: db,
+	}
+}
+
+// FindByID returns a user for the given ID
+func (r *userRepository) FindByID(id string) (*model.User, error) {
+	user := &model.User{}
+
+	// we need to actually check errors as it could be something other than not found
+	if err := r.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return user, apperrors.NewNotFound("uid", id)
+		}
+		return user, apperrors.NewInternal()
+	}
+
+	return user, nil
+}
+
+func (r *userRepository) Create(user *model.User) (*model.User, error) {
+	if result := r.DB.Create(&user); result.Error != nil {
+		// check unique constraint
+		if isDuplicateKeyError(result.Error) {
+			return nil, apperrors.NewBadRequest(apperrors.DuplicateEmail)
+		}
+
+		log.Printf("Could not create a user with email: %v. Reason: %v\n", user.Email, result.Error)
+		return nil, apperrors.NewInternal()
+	}
+
+	return user, nil
+}
+
+// FindByEmail retrieves user row by email address
+func (r *userRepository) FindByEmail(email string) (*model.User, error) {
+	user := &model.User{}
+
+	// we need to actually check errors as it could be something other than not found
+	if err := r.DB.Where("email = ?", email).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return user, apperrors.NewNotFound("email", email)
+		}
+		return user, apperrors.NewInternal()
+	}
+
+	return user, nil
+}
+
+// Update updates the user in the DB
+func (r *userRepository) Update(user *model.User) error {
+	return r.DB.Save(&user).Error
+}
+
+func (r *userRepository) GetRequestCount(userId string) (*int64, error) {
+	var count int64
+	err := r.DB.
+		Table("users").
+		Joins("JOIN friend_requests fr ON users.id = fr.sender_id").
+		Where("fr.receiver_id = ?", userId).
+		Count(&count).
+		Error
+
+	return &count, err
+}
+
+// isDuplicateKeyError checks if the provided error is a PostgreSQL duplicate key error
+func isDuplicateKeyError(err error) bool {
+	duplicate := regexp.MustCompile(`\(SQLSTATE 23505\)$`)
+	return duplicate.MatchString(err.Error())
+}

@@ -14,6 +14,7 @@ import {
 	Link,
 	Text,
 } from "@chakra-ui/react";
+import { register } from "../lib/api/handler/auth";
 
 const mockRegister = async (values: {
 	email: string;
@@ -28,6 +29,7 @@ function Register() {
 	const navigate = useNavigate();
 	const setUser = userStore((state) => state.setUser);
 	const [error, showError] = useState(false);
+	console.log(import.meta.env.VITE_APP_API);
 	return (
 		<Flex
 			minHeight="100vh"
@@ -43,7 +45,7 @@ function Register() {
 					mb="4"
 					justify="center">
 					<Image
-						src="public\logo\Darkmode.png"
+						src="/logo/Darkmode.png"
 						w="80px"
 					/>
 				</Flex>
@@ -66,15 +68,9 @@ function Register() {
 							validationSchema={RegisterSchema}
 							onSubmit={async (values, { setErrors }) => {
 								try {
-									const { data } = await mockRegister(values);
+									const { data } = await register(values);
 									if (data) {
-										setUser({
-											id: "",
-											username: "",
-											email: "",
-											image: "",
-											...data,
-										});
+										setUser(data);
 										navigate("/channels/me");
 									}
 								} catch (err: any) {

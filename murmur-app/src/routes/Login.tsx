@@ -14,6 +14,7 @@ import { LoginSchema } from "../lib/utils/validation/auth.schema";
 import { Link as RLink, useNavigate } from "react-router-dom";
 import { toErrorMap } from "../lib/utils/toErrorMap";
 import { userStore } from "../lib/store/userStore";
+import { login } from "../lib/api/handler/auth";
 
 const mockLogin = async (values: { email: string; password: string }) => {
 	console.log("Mock login called with values:", values);
@@ -38,7 +39,7 @@ function Login() {
 					mb="4"
 					justify="center">
 					<Image
-						src="public\logo\Darkmode.png"
+						src="/logo/Darkmode.png"
 						w="80px"
 					/>
 				</Flex>
@@ -60,16 +61,9 @@ function Login() {
 							validationSchema={LoginSchema}
 							onSubmit={async (values, { setErrors }) => {
 								try {
-									const { data } = await mockLogin(values);
+									const { data } = await login(values);
 									if (data) {
-										const user = {
-											id: "",
-											username: "",
-											email: "",
-											image: "",
-											...data,
-										};
-										setUser(user);
+										setUser(data);
 										navigate("/channels/me");
 									}
 								} catch (err: any) {

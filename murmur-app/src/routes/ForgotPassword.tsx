@@ -29,7 +29,7 @@ function ForgotPassword() {
 					mb="4"
 					justify="center">
 					<Image
-						src="public\logo\Darkmode.png"
+						src="/logo/Darkmode.png"
 						w="80px"
 					/>
 				</Flex>

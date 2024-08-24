@@ -9,10 +9,7 @@ export const Logo: React.FC = () => {
 			<Text
 				fontSize="lg"
 				fontWeight="bold">
-				<Image
-					src="public\logo\Darkmode.png"
-					w="80px"
-				/>
+				<Image src="/logo/Darkmode.png" />
 			</Text>
 		</Box>
 	);
