@@ -1,4 +1,4 @@
-import { FieldError } from "../model/fieldError";
+import { FieldError } from "@models/fieldError";
 
 export const toErrorMap = (errors: FieldError[]): Record<string, string> => {
 	const errorMap: Record<string, string> = {};

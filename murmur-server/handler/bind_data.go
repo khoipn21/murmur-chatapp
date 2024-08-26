@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"murmur-server/model"
 	"murmur-server/model/apperrors"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Request contains the validate function which validates the request with bindData

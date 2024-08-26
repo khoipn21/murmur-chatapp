@@ -1,6 +1,6 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
-import { Account } from "../model/account";
+import { Account } from "@models/account";
 
 type AccountState = {
 	current: Account | null;

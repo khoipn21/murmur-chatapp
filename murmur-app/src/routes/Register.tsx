@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Formik, Form } from "formik";
-import InputFields from "../components/common/InputFields";
-import { RegisterSchema } from "../lib/utils/validation/auth.schema";
+import InputFields from "@common/InputFields";
+import { RegisterSchema } from "@utils/validation/auth.schema";
 import { Link as RLink, useNavigate } from "react-router-dom";
-import { toErrorMap } from "../lib/utils/toErrorMap";
-import { userStore } from "../lib/store/userStore";
+import { toErrorMap } from "@utils/toErrorMap";
+import { userStore } from "@store/userStore";
+import { register } from "@api/handler/auth";
 import {
 	Box,
 	Button,
@@ -14,16 +15,15 @@ import {
 	Link,
 	Text,
 } from "@chakra-ui/react";
-import { register } from "../lib/api/handler/auth";
 
-const mockRegister = async (values: {
-	email: string;
-	username: string;
-	password: string;
-}) => {
-	console.log("Mock register called with values:", values);
-	return { data: { user: "mockUser" } }; // Mock response
-};
+// const mockRegister = async (values: {
+// 	email: string;
+// 	username: string;
+// 	password: string;
+// }) => {
+// 	console.log("Mock register called with values:", values);
+// 	return { data: { user: "mockUser" } }; // Mock response
+// };
 
 function Register() {
 	const navigate = useNavigate();

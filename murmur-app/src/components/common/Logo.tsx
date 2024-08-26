@@ -1,7 +1,6 @@
 import { Box, Image, Text } from "@chakra-ui/react";
-import React from "react";
 
-export const Logo: React.FC = () => {
+function Logo() {
 	return (
 		<Box
 			w="80px"
@@ -13,6 +12,6 @@ export const Logo: React.FC = () => {
 			</Text>
 		</Box>
 	);
-};
+}
 
 export default Logo;

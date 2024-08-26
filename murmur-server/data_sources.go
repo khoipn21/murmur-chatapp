@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
@@ -10,6 +12,7 @@ import (
 	"log"
 	"murmur-server/config"
 	"murmur-server/model"
+	"os"
 )
 
 type dataSources struct {
@@ -31,8 +34,23 @@ func initDS(ctx context.Context, cfg config.Config) (*dataSources, error) {
 	// Migrate models and setup join tables
 	if err = db.AutoMigrate(
 		&model.User{},
+		&model.Guild{},
+		&model.Member{},
+		&model.Channel{},
+		&model.DMMember{},
+		&model.Message{},
+		&model.Attachment{},
+		&model.VCMember{},
 	); err != nil {
 		return nil, fmt.Errorf("error migrating models: %w", err)
+	}
+
+	if err = db.SetupJoinTable(&model.Guild{}, "Members", &model.Member{}); err != nil {
+		return nil, fmt.Errorf("error creating join table: %w", err)
+	}
+
+	if err = db.SetupJoinTable(&model.Guild{}, "VCMembers", &model.VCMember{}); err != nil {
+		return nil, fmt.Errorf("error creating join table: %w", err)
 	}
 
 	// Initialize redis connection
@@ -51,9 +69,26 @@ func initDS(ctx context.Context, cfg config.Config) (*dataSources, error) {
 		return nil, fmt.Errorf("error connecting to redis: %w", err)
 	}
 
+	// Initialize S3 Session
+	sess, err := session.NewSession(
+		&aws.Config{
+			Credentials: credentials.NewStaticCredentials(
+				os.Getenv("AWS_ACCESS_KEY"),
+				os.Getenv("AWS_SECRET_ACCESS_KEY"),
+				"",
+			),
+			Region: aws.String(cfg.Region),
+		},
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("error creating s3 session: %w", err)
+	}
+
 	return &dataSources{
 		DB:          db,
 		RedisClient: rdb,
+		S3Session:   sess,
 	}, nil
 }
 

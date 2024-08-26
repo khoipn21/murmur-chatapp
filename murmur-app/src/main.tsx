@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
-import customTheme from "./lib/utils/theme.ts";
+import customTheme from "@utils/theme.ts";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>

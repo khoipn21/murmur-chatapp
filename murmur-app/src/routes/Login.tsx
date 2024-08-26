@@ -9,17 +9,17 @@ import {
 } from "@chakra-ui/react";
 
 import { Form, Formik } from "formik";
-import InputFields from "../components/common/InputFields";
-import { LoginSchema } from "../lib/utils/validation/auth.schema";
+import InputFields from "@common/InputFields";
+import { LoginSchema } from "@utils/validation/auth.schema";
 import { Link as RLink, useNavigate } from "react-router-dom";
-import { toErrorMap } from "../lib/utils/toErrorMap";
-import { userStore } from "../lib/store/userStore";
-import { login } from "../lib/api/handler/auth";
+import { toErrorMap } from "@utils/toErrorMap";
+import { userStore } from "@store/userStore";
+import { login } from "@api/handler/auth";
 
-const mockLogin = async (values: { email: string; password: string }) => {
-	console.log("Mock login called with values:", values);
-	return { data: { user: "mockUser" } }; // Mock response
-};
+// const mockLogin = async (values: { email: string; password: string }) => {
+// 	console.log("Mock login called with values:", values);
+// 	return { data: { user: "mockUser" } }; // Mock response
+// };
 
 function Login() {
 	const navigate = useNavigate();

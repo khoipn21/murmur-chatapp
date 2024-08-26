@@ -1,6 +1,6 @@
 import { Button, Flex } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import Logo from "../common/Logo";
+import Logo from "@common/Logo";
 
 function NavBar() {
 	return (

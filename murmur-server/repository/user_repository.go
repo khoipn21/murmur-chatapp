@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"errors"
 	"gorm.io/gorm"
 	"log"
@@ -84,4 +85,21 @@ func (r *userRepository) GetRequestCount(userId string) (*int64, error) {
 func isDuplicateKeyError(err error) bool {
 	duplicate := regexp.MustCompile(`\(SQLSTATE 23505\)$`)
 	return duplicate.MatchString(err.Error())
+}
+
+func (r *userRepository) GetFriendAndGuildIds(userId string) (*[]string, error) {
+	var ids []string
+	result := r.DB.Raw(`
+          SELECT g.id
+          FROM guilds g
+          JOIN members m on m.guild_id = g."id"
+          where m.user_id = @userId
+          UNION
+          SELECT "User__friends"."id"
+          FROM "users" "User" LEFT JOIN "friends" "User_User__friends" ON "User_User__friends"."user_id"="User"."id" LEFT
+              JOIN "users" "User__friends" ON "User__friends"."id"="User_User__friends"."friend_id"
+          WHERE ( "User"."id" = @userId )
+	`, sql.Named("userId", userId)).Find(&ids)
+
+	return &ids, result.Error
 }

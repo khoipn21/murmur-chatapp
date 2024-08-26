@@ -4,11 +4,15 @@ import "mime/multipart"
 
 type User struct {
 	BaseModel
-	Username string `gorm:"not null" json:"username"`
-	Email    string `gorm:"not null;uniqueIndex" json:"email"`
-	Password string `gorm:"not null" json:"-"`
-	Image    string `json:"image"`
-	IsOnline bool   `gorm:"index;default:true" json:"isOnline"`
+	Username string    `gorm:"not null" json:"username"`
+	Email    string    `gorm:"not null;uniqueIndex" json:"email"`
+	Password string    `gorm:"not null" json:"-"`
+	Image    string    `json:"image"`
+	IsOnline bool      `gorm:"index;default:true" json:"isOnline"`
+	Friends  []User    `gorm:"many2many:friends;" json:"-"`
+	Requests []User    `gorm:"many2many:friend_requests;joinForeignKey:sender_id;joinReferences:receiver_id" json:"-"`
+	Guilds   []Guild   `gorm:"many2many:members;" json:"-"`
+	Message  []Message `json:"-"`
 }
 
 type UserService interface {
@@ -21,6 +25,7 @@ type UserService interface {
 	ChangeAvatar(header *multipart.FileHeader, directory string) (string, error)
 	DeleteImage(key string) error
 	ChangePassword(currentPassword, newPassword string, user *User) error
+	GetFriendAndGuildIds(userId string) (*[]string, error)
 	GetRequestCount(userId string) (*int64, error)
 }
 
@@ -29,5 +34,6 @@ type UserRepository interface {
 	Create(user *User) (*User, error)
 	FindByEmail(email string) (*User, error)
 	Update(user *User) error
+	GetFriendAndGuildIds(userId string) (*[]string, error)
 	GetRequestCount(userId string) (*int64, error)
 }

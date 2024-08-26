@@ -12,6 +12,7 @@ import (
 	"log"
 	"murmur-server/config"
 	"murmur-server/handler"
+	"murmur-server/handler/middleware"
 	"murmur-server/model"
 	"murmur-server/repository"
 	"murmur-server/service"
@@ -23,12 +24,43 @@ import (
 func inject(d *dataSources, cfg config.Config) (*gin.Engine, error) {
 	log.Println("Injecting data sources")
 	userRepository := repository.NewUserRepository(d.DB)
+	friendRepository := repository.NewFriendRepository(d.DB)
+	guildRepository := repository.NewGuildRepository(d.DB)
+	channelRepository := repository.NewChannelRepository(d.DB)
+	messageRepository := repository.NewMessageRepository(d.DB)
+
 	fileRepository := repository.NewFileRepository(d.S3Session, cfg.BucketName)
+	redisRepository := repository.NewRedisRepository(d.RedisClient)
 
 	userService := service.NewUserService(&service.USConfig{
-		UserRepository: userRepository,
-		FileRepository: fileRepository,
+		UserRepository:  userRepository,
+		FileRepository:  fileRepository,
+		RedisRepository: redisRepository,
 	})
+
+	friendService := service.NewFriendService(&service.FSConfig{
+		UserRepository:   userRepository,
+		FriendRepository: friendRepository,
+	})
+
+	guildService := service.NewGuildService(&service.GSConfig{
+		UserRepository:    userRepository,
+		FileRepository:    fileRepository,
+		RedisRepository:   redisRepository,
+		GuildRepository:   guildRepository,
+		ChannelRepository: channelRepository,
+	})
+
+	channelService := service.NewChannelService(&service.CSConfig{
+		ChannelRepository: channelRepository,
+		GuildRepository:   guildRepository,
+	})
+
+	messageService := service.NewMessageService(&service.MSConfig{
+		MessageRepository: messageRepository,
+		FileRepository:    fileRepository,
+	})
+
 	router := gin.Default()
 
 	// set cors settings
@@ -72,14 +104,31 @@ func inject(d *dataSources, cfg config.Config) (*gin.Engine, error) {
 
 	// Websockets Setup
 	hub := ws.NewWebsocketHub(&ws.Config{
-		UserService: userService,
-		Redis:       d.RedisClient,
+		UserService:    userService,
+		GuildService:   guildService,
+		ChannelService: channelService,
+		Redis:          d.RedisClient,
 	})
 	go hub.Run()
+
+	router.GET("/ws", middleware.AuthUser(), func(c *gin.Context) {
+		ws.ServeWs(hub, c)
+	})
+
+	socketService := service.NewSocketService(&service.SSConfig{
+		Hub:               *hub,
+		GuildRepository:   guildRepository,
+		ChannelRepository: channelRepository,
+	})
 
 	handler.NewHandler(&handler.Config{
 		R:               router,
 		UserService:     userService,
+		FriendService:   friendService,
+		GuildService:    guildService,
+		ChannelService:  channelService,
+		MessageService:  messageService,
+		SocketService:   socketService,
 		TimeoutDuration: time.Duration(cfg.HandlerTimeOut) * time.Second,
 		MaxBodyBytes:    cfg.MaxBodyBytes,
 	})

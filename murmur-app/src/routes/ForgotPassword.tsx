@@ -1,10 +1,9 @@
 import { Box, Button, Flex, Heading, Image, useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import InputFields from "../components/common/InputFields";
-import { toErrorMap } from "../lib/utils/toErrorMap";
-import { ForgotPasswordSchema } from "../lib/utils/validation/auth.schema";
+import InputFields from "@common/InputFields";
+import { toErrorMap } from "@utils/toErrorMap";
+import { ForgotPasswordSchema } from "@utils/validation/auth.schema";
 
 const mockForgotPassword = async (email: string) => {
 	console.log("Mock forgotPassword called with email:", email);

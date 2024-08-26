@@ -23,7 +23,7 @@ type registerReq struct {
 	Username string `json:"username"`
 	// Min 6, max 150 characters.
 	Password string `json:"password"`
-} //@name RegisterRequest
+}
 
 func (r registerReq) validate() error {
 	return validation.ValidateStruct(&r,
@@ -80,7 +80,7 @@ type loginReq struct {
 	Email string `json:"email"`
 	// Min 6, max 150 characters.
 	Password string `json:"password"`
-} //@name LoginRequest
+}
 
 func (r loginReq) validate() error {
 	return validation.ValidateStruct(&r,
@@ -95,18 +95,6 @@ func (r *loginReq) sanitize() {
 	r.Password = strings.TrimSpace(r.Password)
 }
 
-// Login used to authenticate existent user
-// Login godoc
-// @Tags Account
-// @Summary User Login
-// @Accept  json
-// @Produce  json
-// @Param account body loginReq true "Login account"
-// @Success 200 {object} model.User
-// @Failure 400 {object} model.ErrorsResponse
-// @Failure 401 {object} model.ErrorResponse
-// @Failure 500 {object} model.ErrorResponse
-// @Router /account/login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var req loginReq
 
@@ -130,15 +118,6 @@ func (h *Handler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// Logout handler removes the current session
-// Logout godoc
-// @Tags Account
-// @Summary User Logout
-// @Accept  json
-// @Produce  json
-// @Param account body loginReq true "Login account"
-// @Success 200 {object} model.Success
-// @Router /account/logout [post]
 func (h *Handler) Logout(c *gin.Context) {
 	c.Set("user", nil)
 

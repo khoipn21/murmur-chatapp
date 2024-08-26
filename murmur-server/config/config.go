@@ -13,9 +13,9 @@ type Config struct {
 	Domain         string `env:"DOMAIN"`
 	CorsOrigin     string `env:"CORS_ORIGIN,required"`
 	AccessKey      string `env:"AWS_ACCESS_KEY"`
-	SecretKey      string `env:"SECRET_KEY"`
-	BucketName     string `env:"BUCKET_NAME"`
-	Region         string `env:"REGION"`
+	SecretKey      string `env:"AWS_SECRET_ACCESS_KEY"`
+	BucketName     string `env:"AWS_STORAGE_BUCKET_NAME"`
+	Region         string `env:"AWS_S3_REGION"`
 	GmailUser      string `env:"GMAIL_USER"`
 	GmailPassword  string `env:"GMAIL_PASSWORD"`
 	HandlerTimeOut int64  `env:"HANDLER_TIMEOUT,default=5"`

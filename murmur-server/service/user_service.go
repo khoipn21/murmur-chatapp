@@ -15,23 +15,26 @@ import (
 // for use in service methods
 
 type userService struct {
-	UserRepository model.UserRepository
-	FileRepository model.FileRepository
+	UserRepository  model.UserRepository
+	FileRepository  model.FileRepository
+	RedisRepository model.RedisRepository
 }
 
 // USConfig will hold repositories that will eventually be injected into
 // this service layer
 type USConfig struct {
-	UserRepository model.UserRepository
-	FileRepository model.FileRepository
+	UserRepository  model.UserRepository
+	FileRepository  model.FileRepository
+	RedisRepository model.RedisRepository
 }
 
 // NewUserService is a factory function for
 // initializing a UserService with its repository layer dependencies
 func NewUserService(c *USConfig) model.UserService {
 	return &userService{
-		UserRepository: c.UserRepository,
-		FileRepository: c.FileRepository,
+		UserRepository:  c.UserRepository,
+		FileRepository:  c.FileRepository,
+		RedisRepository: c.RedisRepository,
 	}
 }
 
@@ -125,6 +128,10 @@ func (s *userService) ChangePassword(currentPassword, newPassword string, user *
 	user.Password = hashedPassword
 
 	return s.UserRepository.Update(user)
+}
+
+func (s *userService) GetFriendAndGuildIds(userId string) (*[]string, error) {
+	return s.UserRepository.GetFriendAndGuildIds(userId)
 }
 
 func (s *userService) GetRequestCount(userId string) (*int64, error) {

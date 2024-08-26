@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex } from "@chakra-ui/react";
-import NavBar from "../sections/NavBar";
-import Footer from "../sections/Footer";
+import NavBar from "@sections/NavBar";
+import Footer from "@sections/Footer";
 
 interface IProps {
 	children: React.ReactNode;
