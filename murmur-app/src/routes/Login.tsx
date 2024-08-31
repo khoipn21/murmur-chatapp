@@ -15,6 +15,7 @@ import { Link as RLink, useNavigate } from "react-router-dom";
 import { toErrorMap } from "@utils/toErrorMap";
 import { userStore } from "@store/userStore";
 import { login } from "@api/handler/auth";
+import { useState } from "react";
 
 // const mockLogin = async (values: { email: string; password: string }) => {
 // 	console.log("Mock login called with values:", values);
@@ -24,6 +25,8 @@ import { login } from "@api/handler/auth";
 function Login() {
 	const navigate = useNavigate();
 	const setUser = userStore((state) => state.setUser);
+	const [verificationRequired, setVerificationRequired] = useState(false);
+
 	return (
 		<Flex
 			minHeight="100vh"
@@ -63,8 +66,12 @@ function Login() {
 								try {
 									const { data } = await login(values);
 									if (data) {
-										setUser(data);
-										navigate("/channels/me");
+										if ("emailVerified" in data && !data.emailVerified) {
+											setVerificationRequired(true);
+										} else {
+											setUser(data);
+											navigate("/channels/me");
+										}
 									}
 								} catch (err: any) {
 									if (err?.response?.status === 401) {
@@ -129,6 +136,17 @@ function Login() {
 			</Box>
 		</Flex>
 	);
+	{
+		verificationRequired && (
+			<Text
+				color="red.500"
+				mt={4}
+				textAlign="center">
+				Please verify your email to continue. Check your inbox for the
+				verification link.
+			</Text>
+		);
+	}
 }
 
 export default Login;

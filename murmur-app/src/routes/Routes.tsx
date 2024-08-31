@@ -1,15 +1,19 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Landing from "@routes/Landing";
-import Login from "@routes/Login";
-import Register from "@routes/Register";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Landing from "./Landing";
+import Login from "./Login";
+import Register from "./Register";
 import Home from "./Home";
 import Settings from "./Settings";
-import ForgotPassword from "@routes/ForgotPassword";
-import AuthRoute from "@routes/AuthRoute";
+import ForgotPassword from "./ForgotPassword";
+import AuthRoute from "./AuthRoute";
+import GuildView from "./GuildView";
+import Invite from "./Invite";
+import ResetPassword from "./ResetPassword";
+import VerifyEmail from "./VerifyEmail"; // New import
 
 function AppRoutes() {
 	return (
-		<BrowserRouter>
+		<Router>
 			<Routes>
 				<Route
 					path="/"
@@ -47,14 +51,36 @@ function AppRoutes() {
 						</AuthRoute>
 					}
 				/>
-				{/* <Route
+				<Route
+					path="/channels/:guildId/:channelId"
+					element={
+						<AuthRoute>
+							<GuildView />
+						</AuthRoute>
+					}
+				/>
+				<Route
+					path="/:link"
+					element={
+						<AuthRoute>
+							<Invite />
+						</AuthRoute>
+					}
+				/>
+				<Route
+					path="/reset-password/:token"
+					element={<ResetPassword />}
+				/>
+				<Route
 					path="/forgot-password"
 					element={<ForgotPassword />}
-				/> */}
-				{/* <Route 
-				path=""/> */}
+				/>
+				<Route
+					path="/verify-email/:token"
+					element={<VerifyEmail />} // New route
+				/>
 			</Routes>
-		</BrowserRouter>
+		</Router>
 	);
 }
 

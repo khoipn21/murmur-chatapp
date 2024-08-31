@@ -31,11 +31,13 @@ func inject(d *dataSources, cfg config.Config) (*gin.Engine, error) {
 
 	fileRepository := repository.NewFileRepository(d.S3Session, cfg.BucketName)
 	redisRepository := repository.NewRedisRepository(d.RedisClient)
+	mailRepository := repository.NewMailRepository(cfg.GmailUser, cfg.GmailPassword, cfg.CorsOrigin)
 
 	userService := service.NewUserService(&service.USConfig{
 		UserRepository:  userRepository,
 		FileRepository:  fileRepository,
 		RedisRepository: redisRepository,
+		MailRepository:  mailRepository,
 	})
 
 	friendService := service.NewFriendService(&service.FSConfig{

@@ -133,3 +133,113 @@ func (h *Handler) Logout(c *gin.Context) {
 
 	c.JSON(http.StatusOK, true)
 }
+
+type forgotRequest struct {
+	Email string `json:"email"`
+} //@name ForgotPasswordRequest
+
+func (r forgotRequest) validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.Email, validation.Required, is.EmailFormat),
+	)
+}
+
+func (r *forgotRequest) sanitize() {
+	r.Email = strings.TrimSpace(r.Email)
+	r.Email = strings.ToLower(r.Email)
+}
+
+func (h *Handler) ForgotPassword(c *gin.Context) {
+	var req forgotRequest
+	if valid := bindData(c, &req); !valid {
+		return
+	}
+
+	req.sanitize()
+
+	user, err := h.userService.GetByEmail(req.Email)
+
+	if err != nil {
+		// No user with the email found
+		if err.Error() == apperrors.NewNotFound("email", req.Email).Error() {
+			c.JSON(http.StatusOK, true)
+			return
+		}
+
+		e := apperrors.NewInternal()
+		c.JSON(e.Status(), gin.H{
+			"error": e,
+		})
+		return
+	}
+
+	ctx := c.Request.Context()
+	err = h.userService.ForgotPassword(ctx, user)
+
+	if err != nil {
+		e := apperrors.NewInternal()
+		c.JSON(e.Status(), gin.H{
+			"error": e,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, true)
+}
+
+type resetRequest struct {
+	// The token the user got from the email.
+	Token string `json:"token"`
+	// Min 6, max 150 characters.
+	Password string `json:"newPassword"`
+	// Must be the same as the password value.
+	ConfirmPassword string `json:"confirmNewPassword"`
+} //@name ResetPasswordRequest
+
+func (r resetRequest) validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.Token, validation.Required),
+		validation.Field(&r.Password, validation.Required, validation.Length(6, 150)),
+		validation.Field(&r.ConfirmPassword, validation.Required, validation.Length(6, 150)),
+	)
+}
+
+func (r *resetRequest) sanitize() {
+	r.Token = strings.TrimSpace(r.Token)
+	r.Password = strings.TrimSpace(r.Password)
+	r.ConfirmPassword = strings.TrimSpace(r.ConfirmPassword)
+}
+
+func (h *Handler) ResetPassword(c *gin.Context) {
+	var req resetRequest
+
+	if valid := bindData(c, &req); !valid {
+		return
+	}
+
+	req.sanitize()
+
+	// Check if passwords match
+	if req.Password != req.ConfirmPassword {
+		toFieldErrorResponse(c, "Password", apperrors.PasswordsDoNotMatch)
+		return
+	}
+
+	ctx := c.Request.Context()
+	user, err := h.userService.ResetPassword(ctx, req.Password, req.Token)
+
+	if err != nil {
+		if err.Error() == apperrors.NewBadRequest(apperrors.InvalidResetToken).Error() {
+			toFieldErrorResponse(c, "Token", apperrors.InvalidResetToken)
+			return
+		}
+		c.JSON(apperrors.Status(err), gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	setUserSession(c, user.ID)
+
+	c.JSON(http.StatusOK, user)
+}

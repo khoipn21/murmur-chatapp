@@ -23,7 +23,14 @@ export const RegisterSchema = yup.object().shape({
 		.string()
 		.min(6, "Password must be at least 6 characters long")
 		.max(150)
+		.matches(/[A-Za-z]/, "Password must contain at least one alphabet")
+		.matches(/[0-9]/, "Password must contain at least one number")
 		.required("Password is required")
+		.defined(),
+	confirmPassword: yup
+		.string()
+		.oneOf([yup.ref("password"), undefined], "Passwords must match")
+		.required("Confirm Password is required")
 		.defined(),
 });
 

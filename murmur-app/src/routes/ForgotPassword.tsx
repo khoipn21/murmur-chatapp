@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import InputFields from "@common/InputFields";
 import { toErrorMap } from "@utils/toErrorMap";
 import { ForgotPasswordSchema } from "@utils/validation/auth.schema";
+import { forgotPassword } from "@api/handler/auth";
 
-const mockForgotPassword = async (email: string) => {
-	console.log("Mock forgotPassword called with email:", email);
-	return { data: { message: "Mock reset email sent" } }; // Mock response
-};
+// const mockForgotPassword = async (email: string) => {
+// 	console.log("Mock forgotPassword called with email:", email);
+// 	return { data: { message: "Mock reset email sent" } }; // Mock response
+// };
 function ForgotPassword() {
 	const navigate = useNavigate();
 	const toast = useToast();
@@ -28,7 +29,7 @@ function ForgotPassword() {
 					mb="4"
 					justify="center">
 					<Image
-						src="/logo/Darkmode.png"
+						src={"/logo/Darkmode.png"}
 						w="80px"
 					/>
 				</Flex>
@@ -47,7 +48,7 @@ function ForgotPassword() {
 							validationSchema={ForgotPasswordSchema}
 							onSubmit={async (values, { setErrors }) => {
 								try {
-									const { data } = await mockForgotPassword(values.email);
+									const { data } = await forgotPassword(values.email);
 									if (data) {
 										toast({
 											title: "Reset Mail.",

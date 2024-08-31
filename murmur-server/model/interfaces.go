@@ -18,3 +18,7 @@ type RedisRepository interface {
 	GetInvite(ctx context.Context, token string) (string, error)
 	InvalidateInvites(ctx context.Context, guild *Guild)
 }
+
+type MailRepository interface {
+	SendResetMail(email string, html string) error
+}

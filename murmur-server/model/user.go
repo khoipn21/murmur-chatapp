@@ -1,6 +1,9 @@
 package model
 
-import "mime/multipart"
+import (
+	"context"
+	"mime/multipart"
+)
 
 type User struct {
 	BaseModel
@@ -25,6 +28,8 @@ type UserService interface {
 	ChangeAvatar(header *multipart.FileHeader, directory string) (string, error)
 	DeleteImage(key string) error
 	ChangePassword(currentPassword, newPassword string, user *User) error
+	ForgotPassword(ctx context.Context, user *User) error
+	ResetPassword(ctx context.Context, password string, token string) (*User, error)
 	GetFriendAndGuildIds(userId string) (*[]string, error)
 	GetRequestCount(userId string) (*int64, error)
 }

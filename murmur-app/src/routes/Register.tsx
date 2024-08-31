@@ -29,6 +29,7 @@ function Register() {
 	const navigate = useNavigate();
 	const setUser = userStore((state) => state.setUser);
 	const [error, showError] = useState(false);
+	const [registrationComplete, setRegistrationComplete] = useState(false);
 	console.log(import.meta.env.VITE_APP_API);
 	return (
 		<Flex
@@ -53,9 +54,20 @@ function Register() {
 					p={4}
 					borderRadius={4}
 					background="brandGray.light">
-					<Box textAlign="center">
-						<Heading fontSize="24px">Welcome to Murmur</Heading>
-					</Box>
+					{registrationComplete ? (
+						<Box textAlign="center">
+							<Heading fontSize="24px">Registration Successful</Heading>
+							<Text mt={4}>
+								A verification email has been sent to your email address. Please
+								check your inbox and click the verification link to activate
+								your account.
+							</Text>
+						</Box>
+					) : (
+						<Box textAlign="center">
+							<Heading fontSize="24px">Welcome to Murmur</Heading>
+						</Box>
+					)}
 					<Box
 						my={4}
 						textAlign="left">
@@ -72,6 +84,7 @@ function Register() {
 									if (data) {
 										setUser(data);
 										navigate("/channels/me");
+										setRegistrationComplete(true);
 									}
 								} catch (err: any) {
 									if (err?.response?.status === 500) {
@@ -103,7 +116,12 @@ function Register() {
 										autoComplete="password"
 										type="password"
 									/>
-
+									<InputFields
+										label="Confirm Password"
+										name="confirmPassword"
+										autoComplete="confirm-password"
+										type="password"
+									/>
 									<Button
 										background="highlight.standard"
 										color="white"

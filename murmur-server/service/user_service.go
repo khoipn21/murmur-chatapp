@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -18,6 +19,7 @@ type userService struct {
 	UserRepository  model.UserRepository
 	FileRepository  model.FileRepository
 	RedisRepository model.RedisRepository
+	MailRepository  model.MailRepository
 }
 
 // USConfig will hold repositories that will eventually be injected into
@@ -26,6 +28,7 @@ type USConfig struct {
 	UserRepository  model.UserRepository
 	FileRepository  model.FileRepository
 	RedisRepository model.RedisRepository
+	MailRepository  model.MailRepository
 }
 
 // NewUserService is a factory function for
@@ -35,6 +38,7 @@ func NewUserService(c *USConfig) model.UserService {
 		UserRepository:  c.UserRepository,
 		FileRepository:  c.FileRepository,
 		RedisRepository: c.RedisRepository,
+		MailRepository:  c.MailRepository,
 	}
 }
 
@@ -128,6 +132,45 @@ func (s *userService) ChangePassword(currentPassword, newPassword string, user *
 	user.Password = hashedPassword
 
 	return s.UserRepository.Update(user)
+}
+
+func (s *userService) ForgotPassword(ctx context.Context, user *model.User) error {
+	token, err := s.RedisRepository.SetResetToken(ctx, user.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return s.MailRepository.SendResetMail(user.Email, token)
+}
+
+func (s *userService) ResetPassword(ctx context.Context, password string, token string) (*model.User, error) {
+	id, err := s.RedisRepository.GetIdFromToken(ctx, token)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.UserRepository.FindByID(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	hashedPassword, err := hashPassword(password)
+
+	if err != nil {
+		log.Printf("Unable to reset password")
+		return nil, apperrors.NewInternal()
+	}
+
+	user.Password = hashedPassword
+
+	if err = s.UserRepository.Update(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (s *userService) GetFriendAndGuildIds(userId string) (*[]string, error) {

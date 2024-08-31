@@ -27,7 +27,7 @@ function FileUploadButton() {
 	const [isSubmitting, setSubmitting] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const [errors, setErrors] = useState({});
-	const disable = process.env.NODE_ENV === "production";
+	const disable = import.meta.env.NODE_ENV === "production";
 
 	const closeModal = (): void => {
 		setErrors({});
