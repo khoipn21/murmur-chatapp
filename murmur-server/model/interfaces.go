@@ -17,8 +17,11 @@ type RedisRepository interface {
 	SaveInvite(ctx context.Context, guildId string, id string, isPermanent bool) error
 	GetInvite(ctx context.Context, token string) (string, error)
 	InvalidateInvites(ctx context.Context, guild *Guild)
+	SetVerificationToken(ctx context.Context, id string) (string, error)
+	GetIdFromVerificationToken(ctx context.Context, token string) (string, error)
 }
 
 type MailRepository interface {
 	SendResetMail(email string, html string) error
+	SendVerificationMail(email string, html string) error
 }

@@ -9,7 +9,8 @@ import AuthRoute from "./AuthRoute";
 import GuildView from "./GuildView";
 import Invite from "./Invite";
 import ResetPassword from "./ResetPassword";
-import VerifyEmail from "./VerifyEmail"; // New import
+import VerifyEmail from "./VerifyEmail";
+import VerifiedWithToken from "./VerifiedWithToken";
 
 function AppRoutes() {
 	return (
@@ -76,8 +77,12 @@ function AppRoutes() {
 					element={<ForgotPassword />}
 				/>
 				<Route
-					path="/verify-email/:token"
+					path="/verify-email"
 					element={<VerifyEmail />} // New route
+				/>
+				<Route
+					path="/verification/:token"
+					element={<VerifiedWithToken />}
 				/>
 			</Routes>
 		</Router>

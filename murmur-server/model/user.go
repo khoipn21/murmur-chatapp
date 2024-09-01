@@ -7,15 +7,16 @@ import (
 
 type User struct {
 	BaseModel
-	Username string    `gorm:"not null" json:"username"`
-	Email    string    `gorm:"not null;uniqueIndex" json:"email"`
-	Password string    `gorm:"not null" json:"-"`
-	Image    string    `json:"image"`
-	IsOnline bool      `gorm:"index;default:true" json:"isOnline"`
-	Friends  []User    `gorm:"many2many:friends;" json:"-"`
-	Requests []User    `gorm:"many2many:friend_requests;joinForeignKey:sender_id;joinReferences:receiver_id" json:"-"`
-	Guilds   []Guild   `gorm:"many2many:members;" json:"-"`
-	Message  []Message `json:"-"`
+	Username   string    `gorm:"not null" json:"username"`
+	Email      string    `gorm:"not null;uniqueIndex" json:"email"`
+	Password   string    `gorm:"not null" json:"-"`
+	Image      string    `json:"image"`
+	IsOnline   bool      `gorm:"index;default:true" json:"isOnline"`
+	IsVerified bool      `gorm:"default:false" json:"isVerified"`
+	Friends    []User    `gorm:"many2many:friends;" json:"-"`
+	Requests   []User    `gorm:"many2many:friend_requests;joinForeignKey:sender_id;joinReferences:receiver_id" json:"-"`
+	Guilds     []Guild   `gorm:"many2many:members;" json:"-"`
+	Message    []Message `json:"-"`
 }
 
 type UserService interface {
@@ -29,7 +30,9 @@ type UserService interface {
 	DeleteImage(key string) error
 	ChangePassword(currentPassword, newPassword string, user *User) error
 	ForgotPassword(ctx context.Context, user *User) error
+	VerifyEmail(ctx context.Context, user *User) error
 	ResetPassword(ctx context.Context, password string, token string) (*User, error)
+	VerifiedWithToken(ctx context.Context, token string) (*User, error)
 	GetFriendAndGuildIds(userId string) (*[]string, error)
 	GetRequestCount(userId string) (*int64, error)
 }

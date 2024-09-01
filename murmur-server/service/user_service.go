@@ -144,6 +144,37 @@ func (s *userService) ForgotPassword(ctx context.Context, user *model.User) erro
 	return s.MailRepository.SendResetMail(user.Email, token)
 }
 
+func (s *userService) VerifyEmail(ctx context.Context, user *model.User) error {
+	token, err := s.RedisRepository.SetVerificationToken(ctx, user.ID)
+	if err != nil {
+		return err
+	}
+
+	return s.MailRepository.SendVerificationMail(user.Email, token)
+}
+
+func (s *userService) VerifiedWithToken(ctx context.Context, token string) (*model.User, error) {
+	id, err := s.RedisRepository.GetIdFromVerificationToken(ctx, token)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.UserRepository.FindByID(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user.IsVerified = true
+
+	if err = s.UserRepository.Update(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (s *userService) ResetPassword(ctx context.Context, password string, token string) (*model.User, error) {
 	id, err := s.RedisRepository.GetIdFromToken(ctx, token)
 

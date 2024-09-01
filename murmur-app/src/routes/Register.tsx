@@ -4,7 +4,7 @@ import InputFields from "@common/InputFields";
 import { RegisterSchema } from "@utils/validation/auth.schema";
 import { Link as RLink, useNavigate } from "react-router-dom";
 import { toErrorMap } from "@utils/toErrorMap";
-import { userStore } from "@store/userStore";
+// import { userStore } from "@store/userStore";
 import { register } from "@api/handler/auth";
 import {
 	Box,
@@ -14,6 +14,7 @@ import {
 	Image,
 	Link,
 	Text,
+	useToast,
 } from "@chakra-ui/react";
 
 // const mockRegister = async (values: {
@@ -27,7 +28,8 @@ import {
 
 function Register() {
 	const navigate = useNavigate();
-	const setUser = userStore((state) => state.setUser);
+	const toast = useToast();
+	// const setUser = userStore((state) => state.setUser);
 	const [error, showError] = useState(false);
 	const [registrationComplete, setRegistrationComplete] = useState(false);
 	console.log(import.meta.env.VITE_APP_API);
@@ -82,8 +84,15 @@ function Register() {
 								try {
 									const { data } = await register(values);
 									if (data) {
-										setUser(data);
-										navigate("/channels/me");
+										toast({
+											title: "Reset Mail.",
+											description:
+												"If an account with that email already exists, we sent you an email",
+											status: "success",
+											duration: 5000,
+											isClosable: true,
+										});
+										navigate("/");
 										setRegistrationComplete(true);
 									}
 								} catch (err: any) {

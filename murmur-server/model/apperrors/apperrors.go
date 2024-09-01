@@ -14,6 +14,7 @@ const (
 	DuplicateEmail      = "An account with that email already exists"
 	PasswordsDoNotMatch = "Passwords do not match"
 	InvalidResetToken   = "Invalid reset token"
+	InvalidVerificationToken = "Invalid Verification Token"
 )
 
 // Friend Errors

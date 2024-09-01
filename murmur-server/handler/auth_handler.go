@@ -1,15 +1,16 @@
 package handler
 
 import (
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"log"
 	"murmur-server/model"
 	"murmur-server/model/apperrors"
 	"net/http"
 	"strings"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
 /*
@@ -22,7 +23,8 @@ type registerReq struct {
 	// Min 3, max 30 characters.
 	Username string `json:"username"`
 	// Min 6, max 150 characters.
-	Password string `json:"password"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirmPassword"`
 }
 
 func (r registerReq) validate() error {
@@ -30,6 +32,7 @@ func (r registerReq) validate() error {
 		validation.Field(&r.Email, validation.Required, is.EmailFormat),
 		validation.Field(&r.Username, validation.Required, validation.Length(3, 30)),
 		validation.Field(&r.Password, validation.Required, validation.Length(6, 150)),
+		validation.Field(&r.ConfirmPassword, validation.Required, validation.Length(6, 150)),
 	)
 }
 
@@ -38,6 +41,7 @@ func (r *registerReq) sanitize() {
 	r.Email = strings.TrimSpace(r.Email)
 	r.Email = strings.ToLower(r.Email)
 	r.Password = strings.TrimSpace(r.Password)
+	r.ConfirmPassword = strings.TrimSpace(r.ConfirmPassword)
 }
 
 // Register handler creates a new user
@@ -50,6 +54,11 @@ func (h *Handler) Register(c *gin.Context) {
 	}
 
 	req.sanitize()
+
+	if req.Password != req.ConfirmPassword {
+		toFieldErrorResponse(c, "Password", apperrors.PasswordsDoNotMatch)
+		return
+	}
 
 	initial := &model.User{
 		Email:    req.Email,
@@ -64,6 +73,14 @@ func (h *Handler) Register(c *gin.Context) {
 			toFieldErrorResponse(c, "Email", apperrors.DuplicateEmail)
 			return
 		}
+		c.JSON(apperrors.Status(err), gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	ctx := c.Request.Context()
+	if err := h.userService.VerifyEmail(ctx, user); err != nil {
 		c.JSON(apperrors.Status(err), gin.H{
 			"error": err,
 		})
@@ -109,6 +126,15 @@ func (h *Handler) Login(c *gin.Context) {
 	if err != nil {
 		c.JSON(apperrors.Status(err), gin.H{
 			"error": err,
+		})
+		return
+	}
+
+	// Check if the user is verified
+	if !user.IsVerified {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Account not verified",
+			"isVerified": false,
 		})
 		return
 	}
@@ -227,6 +253,102 @@ func (h *Handler) ResetPassword(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	user, err := h.userService.ResetPassword(ctx, req.Password, req.Token)
+
+	if err != nil {
+		if err.Error() == apperrors.NewBadRequest(apperrors.InvalidResetToken).Error() {
+			toFieldErrorResponse(c, "Token", apperrors.InvalidResetToken)
+			return
+		}
+		c.JSON(apperrors.Status(err), gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	setUserSession(c, user.ID)
+
+	c.JSON(http.StatusOK, user)
+}
+
+type verifyRequest struct {
+	Email string `json:"email"`
+}
+
+func (r verifyRequest) validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.Email, validation.Required, is.EmailFormat),
+	)
+}
+
+func (r *verifyRequest) sanitize() {
+	r.Email = strings.TrimSpace(r.Email)
+	r.Email = strings.ToLower(r.Email)
+}
+
+func (h *Handler) VerifyEmail(c *gin.Context) {
+	var req verifyRequest
+	if valid := bindData(c, &req); !valid {
+		return
+	}
+
+	req.sanitize()
+
+	user, err := h.userService.GetByEmail(req.Email)
+
+	if err != nil {
+		// No user with the email found
+		if err.Error() == apperrors.NewNotFound("email", req.Email).Error() {
+			c.JSON(http.StatusOK, true)
+			return
+		}
+
+		e := apperrors.NewInternal()
+		c.JSON(e.Status(), gin.H{
+			"error": e,
+		})
+		return
+	}
+
+	ctx := c.Request.Context()
+	err = h.userService.VerifyEmail(ctx, user)
+
+	if err != nil {
+		e := apperrors.NewInternal()
+		c.JSON(e.Status(), gin.H{
+			"error": e,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, true)
+}
+
+type verifiedWithTokenRequest struct {
+	// The token the user got from the email.
+	Token string `json:"token"`
+}
+
+func (r verifiedWithTokenRequest) validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.Token, validation.Required),
+	)
+}
+
+func (r *verifiedWithTokenRequest) sanitize() {
+	r.Token = strings.TrimSpace(r.Token)
+}
+
+func (h *Handler) VerifiedWithToken(c *gin.Context) {
+	var req verifiedWithTokenRequest
+
+	if valid := bindData(c, &req); !valid {
+		return
+	}
+
+	req.sanitize()
+
+	ctx := c.Request.Context()
+	user, err := h.userService.VerifiedWithToken(ctx, req.Token)
 
 	if err != nil {
 		if err.Error() == apperrors.NewBadRequest(apperrors.InvalidResetToken).Error() {

@@ -87,3 +87,12 @@ export const ForgotPasswordSchema = yup.object().shape({
 		.required("Email is required")
 		.defined(),
 });
+
+export const ResendVerificationSchema = yup.object().shape({
+	email: yup
+		.string()
+		.email()
+		.lowercase()
+		.required("Email is required")
+		.defined(),
+});

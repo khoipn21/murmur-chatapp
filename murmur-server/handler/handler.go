@@ -59,6 +59,8 @@ func NewHandler(c *Config) {
 	ag.POST("/logout", h.Logout)
 	ag.POST("/forgot-password", h.ForgotPassword)
 	ag.POST("/reset-password", h.ResetPassword)
+	ag.POST("/verify-email", h.VerifyEmail)
+	ag.POST("/verification", h.VerifiedWithToken)
 	ag.Use(middleware.AuthUser())
 	ag.GET("", h.GetCurrent)
 	ag.PUT("", h.Edit)

@@ -27,6 +27,7 @@ func NewRedisRepository(rds *redis.Client) model.RedisRepository {
 const (
 	InviteLinkPrefix     = "inviteLink"
 	ForgotPasswordPrefix = "forgot-password"
+	VerificationPrefix   = "verification"
 )
 
 // SetResetToken inserts a password reset token in the DB and returns the generated token
@@ -46,6 +47,22 @@ func (r *redisRepository) SetResetToken(ctx context.Context, id string) (string,
 	return uid, nil
 }
 
+func (r *redisRepository) SetVerificationToken(ctx context.Context, id string) (string, error) {
+	uid, err := gonanoid.New()
+
+	if err != nil {
+		log.Printf("Failed to generate id: %v\n", err.Error())
+		return "", apperrors.NewInternal()
+	}
+
+	if err = r.rds.Set(ctx, fmt.Sprintf("%s:%s", VerificationPrefix, uid), id, 24*time.Hour).Err(); err != nil {
+		log.Printf("Failed to set link in redis: %v\n", err.Error())
+		return "", apperrors.NewInternal()
+	}
+
+	return uid, nil
+}
+
 // GetIdFromToken returns the user ID from the DB for the given token
 func (r *redisRepository) GetIdFromToken(ctx context.Context, token string) (string, error) {
 	key := fmt.Sprintf("%s:%s", ForgotPasswordPrefix, token)
@@ -53,6 +70,24 @@ func (r *redisRepository) GetIdFromToken(ctx context.Context, token string) (str
 
 	if err == redis.Nil {
 		return "", apperrors.NewBadRequest(apperrors.InvalidResetToken)
+	}
+	if err != nil {
+		log.Printf("Failed to get value from redis: %v\n", err)
+		return "", apperrors.NewInternal()
+	}
+
+	r.rds.Del(ctx, key)
+
+	return val, nil
+}
+
+
+func (r *redisRepository) GetIdFromVerificationToken(ctx context.Context, token string) (string, error) {
+	key := fmt.Sprintf("%s:%s", VerificationPrefix, token)
+	val, err := r.rds.Get(ctx, key).Result()
+
+	if err == redis.Nil {
+		return "", apperrors.NewBadRequest(apperrors.InvalidVerificationToken)
 	}
 	if err != nil {
 		log.Printf("Failed to get value from redis: %v\n", err)

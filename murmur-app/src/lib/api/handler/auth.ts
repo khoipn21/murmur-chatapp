@@ -5,6 +5,7 @@ import {
 	RegisterDTO,
 	ChangePasswordInput,
 	ResetPasswordInput,
+	VerifiedWithTokenBody
 } from "../dto/AuthInput";
 import { Account } from "../../models/account";
 
@@ -31,5 +32,10 @@ export const forgotPassword = (
 ): Promise<AxiosResponse<boolean>> =>
 	request.post("/account/forgot-password", { email });
 
-export const verifyEmail = (token: string): Promise<AxiosResponse<Account>> =>
-	request.post(`/account/verify-email/${token}`);
+export const verifyEmail = (email: string): Promise<AxiosResponse<boolean>> =>
+	request.post("/account/verify-email", { email });
+
+export const verificationWithToken = (
+	body: VerifiedWithTokenBody,
+): Promise<AxiosResponse<Account>> =>
+	request.post("/account/verification", body);

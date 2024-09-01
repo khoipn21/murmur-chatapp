@@ -25,3 +25,7 @@ export class ResetPasswordInput {
 
 	confirmNewPassword!: string;
 }
+
+export interface VerifiedWithTokenBody {
+	token: string;
+}

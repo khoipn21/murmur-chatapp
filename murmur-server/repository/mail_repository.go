@@ -44,3 +44,23 @@ func (m *mailRepository) SendResetMail(email string, token string) error {
 	log.Printf("Email sent to %s successfully", email)
 	return nil
 }
+
+func (m *mailRepository) SendVerificationMail(email string, token string) error {
+
+	msg := "From: " + m.username + "\n" +
+		"To: " + email + "\n" +
+		"Subject: Reset Email\n\n" +
+		fmt.Sprintf("<a href=\"%s/verification/%s\">Verification</a>", m.origin, token)
+
+	err := smtp.SendMail("smtp.gmail.com:587",
+		smtp.PlainAuth("", m.username, m.password, "smtp.gmail.com"),
+		m.username, []string{email}, []byte(msg))
+
+	if err != nil {
+		log.Printf("Failed to send email to %s: %v", email, err)
+		return err
+	}
+
+	log.Printf("Email sent to %s successfully", email)
+	return nil
+}
