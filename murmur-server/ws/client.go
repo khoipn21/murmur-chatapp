@@ -2,12 +2,14 @@ package ws
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"log"
 	"murmur-server/model"
 	"net/http"
+	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 const (
@@ -28,20 +30,24 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	ID    string
-	conn  *websocket.Conn
-	hub   *Hub
-	send  chan []byte
-	rooms map[*Room]bool
+	ID             string
+	conn           *websocket.Conn
+	hub            *Hub
+	send           chan []byte
+	rooms          map[*Room]bool
+	offlineTimer   *time.Timer
+	offlineTimerMu sync.Mutex
 }
 
 func newClient(conn *websocket.Conn, hub *Hub, id string) *Client {
 	return &Client{
-		ID:    id,
-		conn:  conn,
-		hub:   hub,
-		send:  make(chan []byte, 256),
-		rooms: make(map[*Room]bool),
+		ID:             id,
+		conn:           conn,
+		hub:            hub,
+		send:           make(chan []byte, 256),
+		rooms:          make(map[*Room]bool),
+		offlineTimer:   nil,
+		offlineTimerMu: sync.Mutex{},
 	}
 }
 
@@ -112,6 +118,18 @@ func (client *Client) writePump() {
 }
 
 func (client *Client) disconnect() {
+	client.offlineTimerMu.Lock()
+	if client.offlineTimer != nil {
+		client.offlineTimer.Stop()
+	}
+	client.offlineTimer = time.NewTimer(2 * time.Minute)
+	client.offlineTimerMu.Unlock()
+
+	go func() {
+		<-client.offlineTimer.C
+		client.toggleOnlineStatus(false)
+	}()
+
 	client.hub.unregister <- client
 	for room := range client.rooms {
 		room.unregister <- client
@@ -132,10 +150,18 @@ func ServeWs(hub *Hub, ctx *gin.Context) {
 
 	client := newClient(conn, hub, userId)
 
+	client.offlineTimerMu.Lock()
+	if client.offlineTimer != nil {
+		client.offlineTimer.Stop()
+		client.offlineTimer = nil
+	}
+	client.offlineTimerMu.Unlock()
+
 	go client.writePump()
 	go client.readPump()
 
 	hub.register <- client
+	go client.toggleOnlineStatus(true)
 }
 
 func (client *Client) handleNewMessage(jsonMessage []byte) {
@@ -291,6 +317,7 @@ func (client *Client) handleTypingEvent(message model.ReceivedMessage, action st
 // toggleOnlineStatus updates the users online status and emits it to all
 // guilds the user is a member of and all of their friends
 func (client *Client) toggleOnlineStatus(isOnline bool) {
+	log.Printf("Starting toggleOnlineStatus for user %s, isOnline: %v", client.ID, isOnline)
 	uid := client.ID
 	us := client.hub.userService
 
@@ -329,6 +356,7 @@ func (client *Client) toggleOnlineStatus(isOnline bool) {
 			room.broadcast <- &msg
 		}
 	}
+	log.Printf("Finished toggleOnlineStatus for user %s, isOnline: %v", uid, isOnline)
 }
 
 // handleJoinGuildMessage joins the given guild's voice chat if the user is a member in it

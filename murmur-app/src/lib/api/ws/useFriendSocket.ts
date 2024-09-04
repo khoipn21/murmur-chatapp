@@ -32,6 +32,9 @@ function useFriendSocket(): void {
 
 		socket.addEventListener("message", (event) => {
 			const response: WSMessage = JSON.parse(event.data);
+			console.log("Received WebSocket message:", response);
+			console.log("Current user ID:", current?.id);
+			console.log("Friends query key:", [fKey]);
 			switch (response.action) {
 				case "toggle_online": {
 					cache.setQueryData<Friend[]>([fKey], (d) => {
@@ -77,6 +80,15 @@ function useFriendSocket(): void {
 				default:
 					break;
 			}
+		});
+
+		socket.addEventListener("open", () => {
+			console.log("WebSocket connection opened");
+			socket.send(JSON.stringify({ action: "toggleOnline" }));
+		});
+
+		socket.addEventListener("close", () => {
+			console.log("WebSocket connection closed");
 		});
 
 		return () => {
