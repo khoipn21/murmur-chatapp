@@ -20,7 +20,7 @@ import { GuildSchema } from "@utils/validation/guild.schema";
 import { createGuild, joinGuild } from "@api/handler/guild";
 import { userStore } from "@store/userStore";
 import { toErrorMap } from "@utils/toErrorMap";
-import { gKey } from "@utils/queryKeys";
+import { gKey } from "@utils/querykeys";
 import { Guild } from "@models/guild";
 
 interface IProps {

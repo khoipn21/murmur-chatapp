@@ -8,7 +8,7 @@ import { RouterProps } from "@models/routerProps";
 import { userStore } from "@store/userStore";
 import { voiceStore } from "@store/voiceStore";
 import { useSetupVoiceChat } from "@hooks/useVoiceChat";
-import { vcKey } from "@utils/queryKeys";
+import { vcKey } from "@utils/querykeys";
 import VoiceChannelItem from "@items/VoiceChannelItem";
 
 function VoiceChat() {
