@@ -28,7 +28,7 @@ import { toErrorMap } from "@utils/toErrorMap";
 import { getGuildMembers } from "@api/handler/guild";
 import { ChannelSchema } from "@utils/validation/channel.schema";
 import { useGetCurrentChannel } from "@hooks/useGetCurrentChannel";
-import { mKey } from "@utils/queryKeys";
+import { mKey } from "@utils/querykeys";
 import {
 	deleteChannel,
 	editChannel,

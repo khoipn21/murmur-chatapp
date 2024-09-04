@@ -6,7 +6,7 @@ import CreateChannelModal from "@components/modal/CreateChannelModal";
 import GuildMenu from "@components/menu/GuildMenu";
 import InviteModal from "@components/modal/InviteModal";
 import ChannelListItem from "@items/ChannelListItem";
-import { cKey } from "@utils/queryKeys";
+import { cKey } from "@utils/querykeys";
 import { useChannelSocket } from "@websocket/useChannelSocket";
 import { getChannels } from "@api/handler/channel";
 import { RouterProps } from "@models/routerProps";

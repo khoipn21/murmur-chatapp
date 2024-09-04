@@ -8,7 +8,7 @@ import { sendMessage } from "@api/handler/message";
 import { getSameSocket } from "@api/getSocket";
 import { userStore } from "@store/userStore";
 import { channelStore } from "@store/channelStore";
-import { cKey, dmKey } from "@utils/queryKeys";
+import { cKey, dmKey } from "@utils/querykeys";
 import { RouterProps } from "@models/routerProps";
 import "./MessageInput.css";
 

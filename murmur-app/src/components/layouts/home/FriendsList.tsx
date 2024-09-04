@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Flex, Text, UnorderedList } from "@chakra-ui/react";
-import { fKey } from "@utils/queryKeys";
+import { fKey } from "@utils/querykeys";
 import { getFriends } from "@api/handler/account";
 import OnlineLabel from "@sections/OnlineLabel";
 import FriendsListItem from "@items/FriendsListItem";

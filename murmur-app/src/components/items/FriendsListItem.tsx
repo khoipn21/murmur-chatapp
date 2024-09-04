@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { getOrCreateDirectMessage } from "@api/handler/dm";
 import RemoveFriendModal from "@components/modal/RemoveFriendModal";
-import { dmKey } from "@utils/queryKeys";
+import { dmKey } from "@utils/querykeys";
 import { Friend } from "@models/friends";
 import { DMChannel } from "@models/dm";
 

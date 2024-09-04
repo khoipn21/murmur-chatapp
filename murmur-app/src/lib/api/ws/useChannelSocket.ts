@@ -6,7 +6,7 @@ import { useGetCurrentGuild } from "@hooks/useGetCurrentGuild";
 import { userStore } from "@store/userStore";
 import { Channel } from "@models/channel";
 import { VCMember, VoiceResponse } from "@models/voice";
-import { cKey, vcKey } from "@utils/queryKeys";
+import { cKey, vcKey } from "@utils/querykeys";
 
 type WSMessage =
 	| { action: "delete_channel" | "new_notification"; data: string }

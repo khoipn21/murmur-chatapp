@@ -8,7 +8,7 @@ import {
 	HoverGuildPill,
 	NotificationIndicator,
 } from "@common/GuildPills";
-import { gKey } from "@utils/queryKeys";
+import { gKey } from "@utils/querykeys";
 import { Guild } from "@models/guild";
 
 interface GuildListItemProps {

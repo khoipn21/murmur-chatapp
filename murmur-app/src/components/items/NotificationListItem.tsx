@@ -9,7 +9,7 @@ import {
 	NotificationIndicator,
 } from "@common/GuildPills";
 import NotificationIcon from "@common/NotificationIcon";
-import { dmKey, nKey } from "@utils/queryKeys";
+import { dmKey, nKey } from "@utils/querykeys";
 import { DMChannel } from "@models/dm";
 import { DMNotification } from "@models/dm";
 

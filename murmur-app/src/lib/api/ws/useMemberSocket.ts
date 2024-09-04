@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "@api/getSocket";
 import { Member } from "@models/member";
-import { mKey } from "@utils/queryKeys";
+import { mKey } from "@utils/querykeys";
 
 type WSMessage =
 	| {

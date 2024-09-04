@@ -6,7 +6,7 @@ import { VCMember, VoiceResponse, VoiceSignal } from "@models/voice";
 import { userStore } from "@store/userStore";
 import { voiceStore } from "@store/voiceStore";
 import { getSameSocket } from "@api/getSocket";
-import { vcKey } from "@utils/queryKeys";
+import { vcKey } from "@utils/querykeys";
 
 type WSMessage =
 	| { action: "joinVoice" | "leaveVoice"; data: VoiceResponse }

@@ -25,7 +25,7 @@ import InputFields from "@common/InputFields";
 import { toErrorMap } from "@utils/toErrorMap";
 import { getGuildMembers } from "@api/handler/guild";
 import { ChannelSchema } from "@utils/validation/channel.schema";
-import { mKey } from "@utils/queryKeys";
+import { mKey } from "@utils/querykeys";
 import { createChannel } from "@api/handler/channel";
 
 interface IProps {

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "@api/getSocket";
 import { userStore } from "@store/userStore";
-import { dmKey } from "@utils/queryKeys";
+import { dmKey } from "@utils/querykeys";
 import { DMChannel } from "@models/dm";
 
 type WSMessage = {

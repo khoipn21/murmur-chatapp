@@ -23,7 +23,7 @@ import { UserSchema } from "@utils/validation/auth.schema";
 import { getAccount, updateAccount } from "@api/handler/account";
 import { logout } from "@api/handler/auth";
 import CropImageModal from "@components/modal/CropImageModal";
-import { aKey } from "@utils/queryKeys";
+import { aKey } from "@utils/querykeys";
 import { Account } from "@models/account";
 
 function Settings() {

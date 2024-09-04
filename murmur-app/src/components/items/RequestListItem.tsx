@@ -14,7 +14,7 @@ import {
 	acceptFriendRequest,
 	declineFriendRequest,
 } from "@api/handler/account";
-import { fKey, rKey } from "@utils/queryKeys";
+import { fKey, rKey } from "@utils/querykeys";
 import { FriendRequest, RequestType } from "@models/friends";
 
 interface RequestListItemProps {

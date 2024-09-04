@@ -22,7 +22,7 @@ import { userStore } from "@store/userStore";
 import { useGetCurrentGuild } from "@hooks/useGetCurrentGuild";
 import GuildSettingModal from "@components/modal/GuildSettingModal";
 import EditMemberModal from "@components/modal/EditMemberModal";
-import { gKey } from "@utils/queryKeys";
+import { gKey } from "@utils/querykeys";
 import { RouterProps } from "@models/routerProps";
 import { Guild } from "@models/guild";
 

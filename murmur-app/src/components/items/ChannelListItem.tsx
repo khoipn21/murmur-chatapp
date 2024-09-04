@@ -8,7 +8,7 @@ import { userStore } from "@store/userStore";
 import ChannelSettingModal from "@components/modal/ChannelSettingModal";
 import { useGetCurrentGuild } from "@hooks/useGetCurrentGuild";
 import { ChannelNotificationIndicator } from "@common/GuildPills";
-import { cKey } from "@utils/queryKeys";
+import { cKey } from "@utils/querykeys";
 import { Channel } from "@models/channel";
 
 interface ChannelListItemProps {

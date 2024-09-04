@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { removeFriend } from "@api/handler/account";
-import { fKey } from "@utils/queryKeys";
+import { fKey } from "@utils/querykeys";
 import { Friend } from "@models/friends";
 
 interface IProps {

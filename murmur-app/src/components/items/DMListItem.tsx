@@ -11,7 +11,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { IoMdClose } from "react-icons/io";
 import { useQueryClient } from "@tanstack/react-query";
 import { closeDirectMessage } from "@api/handler/dm";
-import { dmKey } from "@utils/queryKeys";
+import { dmKey } from "@utils/querykeys";
 import { DMChannel } from "@models/dm";
 
 interface DMListItemProps {

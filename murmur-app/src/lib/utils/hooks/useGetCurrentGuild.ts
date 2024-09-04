@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { gKey } from "@utils/queryKeys";
+import { gKey } from "@utils/querykeys";
 import { Guild } from "@models/guild";
 
 export function useGetCurrentGuild(guildId: string): Guild | undefined {

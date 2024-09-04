@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import MemberListItem from "@items/MemberListItem";
 import { getGuildMembers } from "@api/handler/guild";
-import { mKey } from "@utils/queryKeys";
+import { mKey } from "@utils/querykeys";
 import { useMemberSocket } from "@websocket/useMemberSocket";
 import OnlineLabel from "@sections/OnlineLabel";
 import { RouterProps } from "@models/routerProps";

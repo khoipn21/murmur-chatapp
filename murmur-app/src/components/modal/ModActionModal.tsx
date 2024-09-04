@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { mKey } from "@utils/queryKeys";
+import { mKey } from "@utils/querykeys";
 import { Member } from "@models/member";
 import { RouterProps } from "@models/routerProps";
 import { banMember, kickMember } from "@api/handler/member";

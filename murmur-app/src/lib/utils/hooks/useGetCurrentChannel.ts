@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Channel } from "@models/channel";
-import { cKey } from "@utils/queryKeys";
+import { cKey } from "@utils/querykeys";
 
 export function useGetCurrentChannel(
 	channelId: string,

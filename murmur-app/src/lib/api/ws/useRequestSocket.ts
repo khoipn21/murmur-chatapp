@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "@api/getSocket";
 import { userStore } from "@store/userStore";
-import { rKey } from "@utils/queryKeys";
+import { rKey } from "@utils/querykeys";
 import { homeStore } from "@store/homeStore";
 import { FriendRequest } from "@models/friends";
 

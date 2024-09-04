@@ -4,7 +4,7 @@ import AccountBar from "@layouts/AccountBar";
 import FriendsListButton from "@sections/FriendsListButton";
 import DMListItem from "@items/DMListItem";
 import { getUserDMs } from "@api/handler/dm";
-import { dmKey } from "@utils/queryKeys";
+import { dmKey } from "@utils/querykeys";
 import useDMSocket from "@websocket/useDMSocket";
 import DMPlaceholder from "@sections/DMPlaceholder";
 

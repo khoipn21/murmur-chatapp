@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Flex, UnorderedList, Text } from "@chakra-ui/react";
-import { rKey } from "@utils/queryKeys";
+import { rKey } from "@utils/querykeys";
 import { getPendingRequests } from "@api/handler/account";
 import OnlineLabel from "@sections/OnlineLabel";
 import { homeStore } from "@store/homeStore";

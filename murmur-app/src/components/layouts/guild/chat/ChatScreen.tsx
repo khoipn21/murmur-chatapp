@@ -12,7 +12,7 @@ import DateDivider from "@sections/DateDivider";
 import ChatGrid from "./ChatGrid";
 import { RouterProps } from "@models/routerProps";
 import { Message as MessageResponse } from "@models/message";
-import { msgKey } from "@utils/queryKeys";
+import { msgKey } from "@utils/querykeys";
 
 function ChatScreen() {
 	const { channelId } = useParams<keyof RouterProps>() as RouterProps;
@@ -37,7 +37,10 @@ function ChatScreen() {
 	>({
 		queryKey: [msgKey, channelId],
 		queryFn: async ({ pageParam }) => {
-			const { data: messageData } = await getMessages(channelId, pageParam as any);
+			const { data: messageData } = await getMessages(
+				channelId,
+				pageParam as any,
+			);
 			if (messageData.length !== 35) setHasMore(false);
 			return messageData;
 		},

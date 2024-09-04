@@ -12,7 +12,7 @@ import GuildListItem from "@items/GuildListItem";
 import AddGuildIcon from "@sections/AddGuildIcon";
 import HomeIcon from "@sections/HomeIcon";
 import { getUserGuilds } from "@api/handler/guild";
-import { gKey, nKey } from "@utils/queryKeys";
+import { gKey, nKey } from "@utils/querykeys";
 import useGuildSocket from "@websocket/useGuildSocket";
 import { DMNotification } from "@models/dm";
 import NotificationListItem from "@items/NotificationListItem";

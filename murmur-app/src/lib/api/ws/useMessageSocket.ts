@@ -4,7 +4,7 @@ import { getSocket } from "@api/getSocket";
 import { userStore } from "@store/userStore";
 import { channelStore } from "@store/channelStore";
 import { Message } from "@models/message";
-import { msgKey } from "@utils/queryKeys";
+import { msgKey } from "@utils/querykeys";
 
 type WSMessage =
 	| { action: "new_message" | "edit_message"; data: Message }

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "@api/getSocket";
 import { userStore } from "@store/userStore";
-import { gKey } from "@utils/queryKeys";
+import { gKey } from "@utils/querykeys";
 import { Guild } from "@models/guild";
 
 type WSMessage =

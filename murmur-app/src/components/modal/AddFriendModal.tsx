@@ -19,7 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { userStore } from "@store/userStore";
 import InputFields from "@common/InputFields";
 import { sendFriendRequest } from "@api/handler/account";
-import { rKey } from "@utils/queryKeys";
+import { rKey } from "@utils/querykeys";
 
 interface AddFriendModalProps {
 	isOpen: boolean;
