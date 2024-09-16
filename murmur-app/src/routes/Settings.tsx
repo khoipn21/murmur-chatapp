@@ -10,6 +10,7 @@ import {
 	Tooltip,
 	useDisclosure,
 	useToast,
+	Input,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRef, useState } from "react";
@@ -101,7 +102,6 @@ function Settings() {
 							onSubmit={async (values, { setErrors }) => {
 								try {
 									const formData = new FormData();
-									formData.append("email", values.email);
 									formData.append("username", values.username);
 
 									if (croppedImage) {
@@ -168,13 +168,13 @@ function Settings() {
 										/>
 									</Flex>
 									<Box my={4}>
-										<InputFields
+										<Input
 											value={values.email}
 											type="email"
 											placeholder="Email"
-											label="Email"
 											name="email"
 											autoComplete="email"
+											isReadOnly={true}
 										/>
 
 										<InputFields

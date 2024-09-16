@@ -55,7 +55,9 @@ export const ResetPasswordSchema = yup.object().shape({
 		.string()
 		.min(6, "Password must be at least 6 characters long")
 		.max(150)
-		.required("New Password is required")
+		.matches(/[A-Za-z]/, "Password must contain at least one alphabet")
+		.matches(/[0-9]/, "Password must contain at least one number")
+		.required("Password is required")
 		.defined(),
 	confirmNewPassword: yup
 		.string()

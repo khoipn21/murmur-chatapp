@@ -317,7 +317,6 @@ func (client *Client) handleTypingEvent(message model.ReceivedMessage, action st
 // toggleOnlineStatus updates the users online status and emits it to all
 // guilds the user is a member of and all of their friends
 func (client *Client) toggleOnlineStatus(isOnline bool) {
-	log.Printf("Starting toggleOnlineStatus for user %s, isOnline: %v", client.ID, isOnline)
 	uid := client.ID
 	us := client.hub.userService
 
@@ -356,7 +355,6 @@ func (client *Client) toggleOnlineStatus(isOnline bool) {
 			room.broadcast <- &msg
 		}
 	}
-	log.Printf("Finished toggleOnlineStatus for user %s, isOnline: %v", uid, isOnline)
 }
 
 // handleJoinGuildMessage joins the given guild's voice chat if the user is a member in it
