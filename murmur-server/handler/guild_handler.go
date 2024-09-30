@@ -3,9 +3,6 @@ package handler
 import (
 	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/lib/pq"
 	"log"
 	"mime/multipart"
 	"murmur-server/model"
@@ -14,8 +11,20 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/lib/pq"
 )
 
+// GetUserGuilds returns the current users guilds
+// GetUserGuilds godoc
+// @Tags Guilds
+// @Summary Get Current User's Guilds
+// @Produce  json
+// @Success 200 {array} model.GuildResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Router /guilds [get]
 func (h *Handler) GetUserGuilds(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
 
@@ -34,6 +43,16 @@ func (h *Handler) GetUserGuilds(c *gin.Context) {
 	c.JSON(http.StatusOK, guilds)
 }
 
+// GetGuildMembers returns the given guild's members
+// GetGuildMembers godoc
+// @Tags Guilds
+// @Summary Get Guild Members
+// @Produce  json
+// @Param guildId path string true "Guild ID"
+// @Success 200 {array} model.MemberResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Router /guilds/{guildId}/members [get]
 func (h *Handler) GetGuildMembers(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
 	guildId := c.Param("guildId")
@@ -75,6 +94,16 @@ func (h *Handler) GetGuildMembers(c *gin.Context) {
 	c.JSON(http.StatusOK, members)
 }
 
+// GetVCMembers returns the given guild's members that are currently in the VC
+// GetVCMembers godoc
+// @Tags Guilds
+// @Summary Get Guild VC Members
+// @Produce  json
+// @Param guildId path string true "Guild ID"
+// @Success 200 {array} model.VCMemberResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Router /guilds/{guildId}/vcmembers [get]
 func (h *Handler) GetVCMembers(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
 	guildId := c.Param("guildId")
@@ -119,7 +148,7 @@ func (h *Handler) GetVCMembers(c *gin.Context) {
 type createGuildRequest struct {
 	// Guild Name. 3 to 30 characters
 	Name string `json:"name"`
-}
+} //@name CreateGuildRequest
 
 func (r createGuildRequest) validate() error {
 	return validation.ValidateStruct(&r,
@@ -131,6 +160,18 @@ func (r *createGuildRequest) sanitize() {
 	r.Name = strings.TrimSpace(r.Name)
 }
 
+// CreateGuild creates a guild
+// CreateGuild godoc
+// @Tags Guilds
+// @Summary Create Guild
+// @Accepts  json
+// @Produce  json
+// @Param request body createGuildRequest true "Create Guild"
+// @Success 201 {array} model.GuildResponse
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /guilds/create [post]
 func (h *Handler) CreateGuild(c *gin.Context) {
 	var req createGuildRequest
 

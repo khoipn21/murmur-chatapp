@@ -1,19 +1,20 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"log"
 	"murmur-server/model"
 	"murmur-server/model/apperrors"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
 type memberReq struct {
 	MemberId string `json:"memberId"`
-}
+} //@name MemberRequest
 
 func (r memberReq) validate() error {
 	return validation.ValidateStruct(&r,
@@ -21,6 +22,16 @@ func (r memberReq) validate() error {
 	)
 }
 
+// GetMemberSettings gets the current user's role color and nickname
+// for the given guild
+// GetMemberSettings godoc
+// @Tags Members
+// @Summary Get Member Settings
+// @Produce  json
+// @Param guildId path string true "Guild ID"
+// @Success 200 {object} model.MemberSettings
+// @Failure 404 {object} model.ErrorResponse
+// @Router /guilds/{guildId}/member [get]
 func (h *Handler) GetMemberSettings(c *gin.Context) {
 	guildId := c.Param("guildId")
 	userId := c.MustGet("userId").(string)
@@ -53,7 +64,7 @@ func (h *Handler) GetMemberSettings(c *gin.Context) {
 type memberSettingsReq struct {
 	Nickname *string `json:"nickname"`
 	Color    *string `json:"color"`
-}
+} //@name MemberSettingsRequest
 
 func (r memberSettingsReq) validate() error {
 	return validation.ValidateStruct(&r,
@@ -68,6 +79,21 @@ func (r *memberSettingsReq) sanitize() {
 		r.Nickname = &nickname
 	}
 }
+
+// EditMemberSettings changes the current user's role color and nickname
+// for the given guild
+// EditMemberSettings godoc
+// @Tags Members
+// @Summary Edit Member Settings
+// @Accepts json
+// @Produce  json
+// @Param request body memberSettingsReq true "Edit Member"
+// @Param guildId path string true "Guild ID"
+// @Success 200 {object} model.Success
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /guilds/{guildId}/member [put]
 
 func (h *Handler) EditMemberSettings(c *gin.Context) {
 	var req memberSettingsReq
@@ -122,6 +148,17 @@ func (h *Handler) EditMemberSettings(c *gin.Context) {
 	c.JSON(http.StatusOK, true)
 }
 
+// GetBanList returns a list of all banned users for the given guild
+// GetBanList godoc
+// @Tags Members
+// @Summary Get Guild Ban list
+// @Produce  json
+// @Param guildId path string true "Guild ID"
+// @Success 200 {array} model.BanResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /guilds/{guildId}/bans [get]
 func (h *Handler) GetBanList(c *gin.Context) {
 	guildId := c.Param("guildId")
 	guild, err := h.guildService.GetGuild(guildId)
@@ -164,6 +201,19 @@ func (h *Handler) GetBanList(c *gin.Context) {
 	c.JSON(http.StatusOK, bans)
 }
 
+// BanMember bans the provided member from the given guild
+// BanMember godoc
+// @Tags Members
+// @Summary Ban Member
+// @Produce  json
+// @Param guildId path string true "Guild ID"
+// @Param request body memberReq true "Member ID"
+// @Success 200 {array} model.Success
+// @Failure 400 {object} model.ErrorResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /guilds/{guildId}/bans [post]
 func (h *Handler) BanMember(c *gin.Context) {
 	var req memberReq
 
@@ -239,6 +289,19 @@ func (h *Handler) BanMember(c *gin.Context) {
 	c.JSON(http.StatusOK, true)
 }
 
+// UnbanMember unbans the specified user from the given guild
+// BanMember godoc
+// @Tags Members
+// @Summary Unban Member
+// @Produce  json
+// @Param guildId path string true "Guild ID"
+// @Param request body memberReq true "Member ID"
+// @Success 200 {array} model.Success
+// @Failure 400 {object} model.ErrorResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /guilds/{guildId}/bans [delete]
 func (h *Handler) UnbanMember(c *gin.Context) {
 	var req memberReq
 
@@ -287,6 +350,19 @@ func (h *Handler) UnbanMember(c *gin.Context) {
 	c.JSON(http.StatusOK, true)
 }
 
+// KickMember kicks the provided member from the given guild
+// KickMember godoc
+// @Tags Members
+// @Summary Kick Member
+// @Produce  json
+// @Param guildId path string true "Guild ID"
+// @Param request body memberReq true "Member ID"
+// @Success 200 {array} model.Success
+// @Failure 400 {object} model.ErrorResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /guilds/{guildId}/kick [post]
 func (h *Handler) KickMember(c *gin.Context) {
 	var req memberReq
 

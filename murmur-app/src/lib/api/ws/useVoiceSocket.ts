@@ -28,12 +28,18 @@ export function useVoiceSocket(): void {
 		setVoiceJoinUserId,
 		setRtcSignalData,
 		setVoiceLeaveUserId,
+		voiceClients,
+		setIsMuted,
+		setIsDeafened,
 	] = voiceStore((state) => [
 		state.inVC,
 		state.setVoiceClients,
 		state.setVoiceJoinUserId,
 		state.setRtcSignalData,
 		state.setVoiceLeaveUserId,
+		state.voiceClients,
+		state.setIsMuted,
+		state.setIsDeafened,
 	]);
 
 	const cache = useQueryClient();
@@ -99,33 +105,35 @@ export function useVoiceSocket(): void {
 						break;
 					}
 
-					// For unknown reasons voiceClients is empty
 					case "toggle-mute": {
-						// const { data } = response;
-						// const clients = voiceClients.map((e) => {
-						//   if (e.id === data.id) {
-						//     return { ...e, isMuted: data.value };
-						//   }
-						//   return e;
-						// });
+						const { data } = response;
+						const clients = voiceClients.map((e) => {
+							if (e.id === data.id) {
+								return { ...e, isMuted: data.value };
+							}
+							return e;
+						});
 
-						// setVoiceClients(clients);
-						// setVoiceMembers(clients);
+						setVoiceClients(clients);
+						if (data.id === current?.id) {
+							setIsMuted(data.value);
+						}
 						break;
 					}
 
-					// Same here
 					case "toggle-deafen": {
-						// const { data } = response;
-						// const clients = voiceClients.map((e) => {
-						//   if (e.id === data.id) {
-						//     return { ...e, isDeafened: data.value };
-						//   }
-						//   return e;
-						// });
+						const { data } = response;
+						const clients = voiceClients.map((e) => {
+							if (e.id === data.id) {
+								return { ...e, isDeafened: data.value };
+							}
+							return e;
+						});
 
-						// setVoiceClients(clients);
-						// setVoiceMembers(clients);
+						setVoiceClients(clients);
+						if (data.id === current?.id) {
+							setIsDeafened(data.value);
+						}
 						break;
 					}
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/joho/godotenv"
 	"log"
 	"murmur-server/config"
 	"net/http"
@@ -10,7 +9,17 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/joho/godotenv"
 )
+
+// @title MurmurChatapp API
+// @version 1.0
+// @description MurmurChatapp REST API Specs. This service uses sessions for authentication
+// @contact.name KhoiPN
+// @contact.email khoingoc456@gmail.com
+// @host localhost:4000
+// @BasePath /api
 
 func main() {
 	log.Println("Starting server...")

@@ -2,9 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	gonanoid "github.com/matoous/go-nanoid"
 	"log"
 	"mime/multipart"
 	"murmur-server/model"
@@ -12,12 +9,28 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	gonanoid "github.com/matoous/go-nanoid"
 )
 
 /*
  * MessageHandler contains all routes related to message actions (/api/messages)
  */
 
+// GetMessages returns messages for the given channel
+// It returns the most recent 35 or the ones after the given cursor
+// GetMessages godoc
+// @Tags Messages
+// @Summary Get Channel Messages
+// @Produce  json
+// @Param channelId path string true "Channel ID"
+// @Param cursor query string false "Cursor Pagination using the createdAt field"
+// @Success 200 {array} model.MessageResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Router /messages/{channelId} [get]
 func (h *Handler) GetMessages(c *gin.Context) {
 	channelId := c.Param("channelId")
 	userId := c.MustGet("userId").(string)
@@ -67,7 +80,7 @@ func (h *Handler) GetMessages(c *gin.Context) {
 type messageRequest struct {
 	Text *string               `form:"text"`
 	File *multipart.FileHeader `form:"file" swaggertype:"string" format:"binary"`
-}
+} //@name MessageRequest
 
 func (r messageRequest) validate() error {
 	return validation.ValidateStruct(&r,
@@ -87,6 +100,20 @@ func (r *messageRequest) sanitize() {
 	}
 }
 
+// CreateMessage creates a message in the given channel
+// CreateMessage godoc
+// @Tags Messages
+// @Summary Create Messages
+// @Accepts  mpfd
+// @Produce  json
+// @Param channelId path string true "Channel ID"
+// @Param request body messageRequest true "Create Message"
+// @Success 201 {object} model.Success
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /messages/{channelId} [post]
 func (h *Handler) CreateMessage(c *gin.Context) {
 	channelId := c.Param("channelId")
 	userId := c.MustGet("userId").(string)
@@ -213,6 +240,20 @@ func (h *Handler) CreateMessage(c *gin.Context) {
 	c.JSON(http.StatusCreated, true)
 }
 
+// EditMessage edits the given message with the given text
+// EditMessage godoc
+// @Tags Messages
+// @Summary Edit Messages
+// @Accepts  json
+// @Produce  json
+// @Param messageId path string true "Message ID"
+// @Param request body messageRequest true "Edit Message"
+// @Success 200 {object} model.Success
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /messages/{messageId} [put]
 func (h *Handler) EditMessage(c *gin.Context) {
 	messageId := c.Param("messageId")
 	userId := c.MustGet("userId").(string)
@@ -267,6 +308,18 @@ func (h *Handler) EditMessage(c *gin.Context) {
 	c.JSON(http.StatusOK, true)
 }
 
+
+// DeleteMessage deletes the given message
+// DeleteMessage godoc
+// @Tags Messages
+// @Summary Delete Messages
+// @Produce  json
+// @Param messageId path string true "Message ID"
+// @Success 200 {object} model.Success
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /messages/{messageId} [delete]
 func (h *Handler) DeleteMessage(c *gin.Context) {
 	messageId := c.Param("messageId")
 	userId := c.MustGet("userId").(string)

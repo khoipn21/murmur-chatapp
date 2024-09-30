@@ -25,7 +25,7 @@ type registerReq struct {
 	// Min 6, max 150 characters.
 	Password        string `json:"password"`
 	ConfirmPassword string `json:"confirmPassword"`
-}
+} //@name RegisterRequest
 
 func (r registerReq) validate() error {
 	return validation.ValidateStruct(&r,
@@ -45,6 +45,17 @@ func (r *registerReq) sanitize() {
 }
 
 // Register handler creates a new user
+// Register godoc
+// @Tags Account
+// @Summary Create an Account
+// @Accept  json
+// @Produce  json
+// @Param account body registerReq true "Create account"
+// @Success 201 {object} model.User
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /account/register [post]
 func (h *Handler) Register(c *gin.Context) {
 	var req registerReq
 
@@ -97,7 +108,7 @@ type loginReq struct {
 	Email string `json:"email"`
 	// Min 6, max 150 characters.
 	Password string `json:"password"`
-}
+} //@name LoginRequest
 
 func (r loginReq) validate() error {
 	return validation.ValidateStruct(&r,
@@ -112,6 +123,19 @@ func (r *loginReq) sanitize() {
 	r.Password = strings.TrimSpace(r.Password)
 }
 
+
+// Login used to authenticate existent user
+// Login godoc
+// @Tags Account
+// @Summary User Login
+// @Accept  json
+// @Produce  json
+// @Param account body loginReq true "Login account"
+// @Success 200 {object} model.User
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /account/login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var req loginReq
 
@@ -144,6 +168,15 @@ func (h *Handler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// Logout handler removes the current session
+// Logout godoc
+// @Tags Account
+// @Summary User Logout
+// @Accept  json
+// @Produce  json
+// @Param account body loginReq true "Login account"
+// @Success 200 {object} model.Success
+// @Router /account/logout [post]
 func (h *Handler) Logout(c *gin.Context) {
 	c.Set("user", nil)
 
@@ -175,6 +208,16 @@ func (r *forgotRequest) sanitize() {
 	r.Email = strings.ToLower(r.Email)
 }
 
+// ForgotPassword godoc
+// @Tags Account
+// @Summary Forgot Password Request
+// @Accept  json
+// @Produce  json
+// @Param email body forgotRequest true "Forgot Password"
+// @Success 200 {object} model.Success
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /account/forgot-password [post]
 func (h *Handler) ForgotPassword(c *gin.Context) {
 	var req forgotRequest
 	if valid := bindData(c, &req); !valid {
@@ -236,6 +279,17 @@ func (r *resetRequest) sanitize() {
 	r.ConfirmPassword = strings.TrimSpace(r.ConfirmPassword)
 }
 
+// ResetPassword resets the user's password with the provided token
+// ResetPassword godoc
+// @Tags Account
+// @Summary Reset Password
+// @Accept  json
+// @Produce  json
+// @Param request body resetRequest true "Reset Password"
+// @Success 200 {object} model.User
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /account/reset-password [post]
 func (h *Handler) ResetPassword(c *gin.Context) {
 	var req resetRequest
 
@@ -272,7 +326,7 @@ func (h *Handler) ResetPassword(c *gin.Context) {
 
 type verifyRequest struct {
 	Email string `json:"email"`
-}
+} //@name VerifyEmailRequest
 
 func (r verifyRequest) validate() error {
 	return validation.ValidateStruct(&r,
@@ -285,6 +339,17 @@ func (r *verifyRequest) sanitize() {
 	r.Email = strings.ToLower(r.Email)
 }
 
+// VerifyEmail verifies the user's email
+// VerifyEmail godoc
+// @Tags Account
+// @Summary Verify Email
+// @Accept  json
+// @Produce  json
+// @Param email body verifyRequest true "Verify Email"
+// @Success 200 {object} model.Success
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /account/verify-email [post]	
 func (h *Handler) VerifyEmail(c *gin.Context) {
 	var req verifyRequest
 	if valid := bindData(c, &req); !valid {
@@ -326,7 +391,7 @@ func (h *Handler) VerifyEmail(c *gin.Context) {
 type verifiedWithTokenRequest struct {
 	// The token the user got from the email.
 	Token string `json:"token"`
-}
+} //@name VerifiedWithTokenRequest
 
 func (r verifiedWithTokenRequest) validate() error {
 	return validation.ValidateStruct(&r,
@@ -338,6 +403,17 @@ func (r *verifiedWithTokenRequest) sanitize() {
 	r.Token = strings.TrimSpace(r.Token)
 }
 
+// VerifiedWithToken verifies the user's email with the provided token
+// VerifiedWithToken godoc
+// @Tags Account
+// @Summary Verified With Token
+// @Accept  json
+// @Produce  json
+// @Param request body verifiedWithTokenRequest true "Verified With Token"
+// @Success 200 {object} model.User
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /account/verified-with-token [post]
 func (h *Handler) VerifiedWithToken(c *gin.Context) {
 	var req verifiedWithTokenRequest
 

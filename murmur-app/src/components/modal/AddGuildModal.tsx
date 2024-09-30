@@ -187,7 +187,7 @@ function JoinServerModal({ goBack, submitClose }: IScreenProps) {
 							<Text
 								fontSize="12px"
 								textColor="brandGray.accent">
-								https://valkyrieapp.xyz/hTKzmak
+								https://example.xyz/hTKzmak
 							</Text>
 						</ModalBody>
 

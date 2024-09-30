@@ -2,13 +2,14 @@ package handler
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"log"
 	"murmur-server/model"
 	"murmur-server/model/apperrors"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 /*
@@ -16,6 +17,15 @@ import (
  */
 
 // GuildChannels returns the given guild's channels
+// GuildChannels godoc
+// @Tags Channels
+// @Summary Get Guild Channels
+// @Produce  json
+// @Param guildId path string true "Guild ID"
+// @Success 200 {array} model.ChannelResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Router /channels/{guildId} [get]
 func (h *Handler) GuildChannels(c *gin.Context) {
 	guildId := c.Param("id")
 	userId := c.MustGet("userId").(string)
@@ -271,6 +281,15 @@ func (h *Handler) PrivateChannelMembers(c *gin.Context) {
 	c.JSON(http.StatusOK, members)
 }
 
+// DirectMessages returns a list of the current users DMs
+// DirectMessages godoc
+// @Tags Channels
+// @Summary Get User's DMs
+// @Produce  json
+// @Success 200 {array} model.DirectMessage
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Router /channels/me/dm [get]
 func (h *Handler) DirectMessages(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
 
@@ -296,6 +315,18 @@ func (h *Handler) DirectMessages(c *gin.Context) {
 	c.JSON(http.StatusOK, channels)
 }
 
+// GetOrCreateDM gets the DM with the given member and creates it
+// if it does not already exist
+// DirectMessages godoc
+// @Tags Channels
+// @Summary Get or Create DM
+// @Produce  json
+// @Param channelId path string true "Member ID"
+// @Success 200 {object} model.DirectMessage
+// @Failure 400 {object} model.ErrorResponse
+// @Failure 404 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /channels/{channelId}/dm [post]
 func (h *Handler) GetOrCreateDM(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
 	memberId := c.Param("id")

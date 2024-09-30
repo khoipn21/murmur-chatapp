@@ -7,7 +7,7 @@ import {
 	Text,
 	useDisclosure,
 } from "@chakra-ui/react";
-import { FaEllipsisV } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { getOrCreateDirectMessage } from "@api/handler/dm";
@@ -66,7 +66,7 @@ function FriendsListItem({ friend }: FriendsListItemProp) {
 					<Text ml="2">{friend.username}</Text>
 				</Flex>
 				<IconButton
-					icon={<FaEllipsisV />}
+					icon={<IoMdClose />}
 					borderRadius="50%"
 					aria-label="remove friend"
 					onClick={(e) => {

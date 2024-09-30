@@ -15,9 +15,9 @@ const styles = {
 
 const colors = {
 	highlight: {
-		standard: "#7289da",
-		hover: "#677bc4",
-		active: "#5b6eae",
+		standard: "#8FBC8F",
+		hover: "#7CAC7C",
+		active: "#6A9A6A",
 	},
 	brandGray: {
 		accent: "#8e9297",

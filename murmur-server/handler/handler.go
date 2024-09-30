@@ -1,13 +1,17 @@
 package handler
 
 import (
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"log"
+	_ "murmur-server/docs"
 	"murmur-server/handler/middleware"
 	"murmur-server/model"
 	"net/http"
 	"time"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handler struct {
@@ -49,9 +53,7 @@ func NewHandler(c *Config) {
 		})
 	})
 
-	c.R.NoRoute(func(c *gin.Context) {
-		c.JSON(404, gin.H{"error": "not found"})
-	})
+	c.R.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	ag := c.R.Group("api/account")
 	ag.POST("/register", h.Register)

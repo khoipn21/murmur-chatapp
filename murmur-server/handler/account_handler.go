@@ -2,14 +2,15 @@ package handler
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"log"
 	"mime/multipart"
 	"murmur-server/model/apperrors"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
 /*
@@ -17,6 +18,13 @@ import (
  * that the authenticated user can do
  */
 
+// GetCurrent godoc
+// @Tags Account
+// @Summary Get Current User
+// @Produce  json
+// @Success 200 {object} model.User
+// @Failure 404 {object} model.ErrorResponse
+// @Router /account [get]
 func (h *Handler) GetCurrent(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
 	user, err := h.userService.Get(userId)
@@ -56,6 +64,17 @@ func (r *editReq) sanitize() {
 	r.Email = strings.ToLower(r.Email)
 }
 
+// Edit godoc
+// @Tags Account
+// @Summary Update Current User
+// @Accept mpfd
+// @Produce  json
+// @Param account body editReq true "Update Account"
+// @Success 200 {object} model.User
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /account [put]
 func (h *Handler) Edit(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
 
@@ -153,6 +172,17 @@ func (r *changeRequest) sanitize() {
 	r.ConfirmNewPassword = strings.TrimSpace(r.ConfirmNewPassword)
 }
 
+// ChangePassword godoc
+// @Tags Account
+// @Summary Change Current User's Password
+// @Accept json
+// @Produce  json
+// @Param request body changeRequest true "Change Password"
+// @Success 200 {object} model.Success
+// @Failure 400 {object} model.ErrorsResponse
+// @Failure 401 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /account/change-password [put]
 func (h *Handler) ChangePassword(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
 	var req changeRequest
