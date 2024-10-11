@@ -19,7 +19,7 @@ import (
 // @Router /account/me/friends [get]
 func (h *Handler) GetUserFriends(c *gin.Context) {
 	userId := c.MustGet("userId").(string)
-
+	log.Printf("User ID from session: %s", userId)
 	friends, err := h.friendService.GetFriends(userId)
 
 	if err != nil {

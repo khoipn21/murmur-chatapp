@@ -51,6 +51,8 @@ func main() {
 		log.Fatalf("Failure to inject data sources: %v\n", err)
 	}
 
+	
+
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
 		Handler: router,

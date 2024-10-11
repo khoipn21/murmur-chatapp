@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Heading, Image, useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RLink } from "react-router-dom";
 import InputFields from "@common/InputFields";
 import { toErrorMap } from "@utils/toErrorMap";
 import { ForgotPasswordSchema } from "@utils/validation/auth.schema";
@@ -88,6 +88,19 @@ function ForgotPassword() {
 										_focus={{ boxShadow: "none" }}
 										fontSize="14px">
 										Send Mail
+									</Button>
+
+									<Button
+										as={RLink}
+										to="/login"
+										variant="link"
+										color="highlight.standard"
+										width="full"
+										mt={4}
+										_hover={{ textDecoration: "underline" }}
+										_focus={{ boxShadow: "none" }}
+										fontSize="14px">
+										Back to Login
 									</Button>
 								</Form>
 							)}

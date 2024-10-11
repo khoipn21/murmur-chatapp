@@ -102,6 +102,7 @@ function Settings() {
 							onSubmit={async (values, { setErrors }) => {
 								try {
 									const formData = new FormData();
+									formData.append("email", values.email);
 									formData.append("username", values.username);
 
 									if (croppedImage) {

@@ -99,7 +99,7 @@ function FileUploadButton() {
 							<ModalCloseButton _focus={{ outline: "none" }} />
 							<ModalBody>
 								<Text mb="2">
-									Reason: <>{errors}</>
+									Reason: {errors && JSON.stringify(errors)}
 								</Text>
 								<Text>Max file size is 5.00 MB</Text>
 								<Text>Only Images and mp3 allowed</Text>

@@ -164,7 +164,8 @@ func (h *Handler) Login(c *gin.Context) {
 	}
 
 	setUserSession(c, user.ID)
-
+	session := sessions.Default(c)
+	log.Printf("Session after login: %v", session.Get("userId"))
 	c.JSON(http.StatusOK, user)
 }
 

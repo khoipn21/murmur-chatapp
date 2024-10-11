@@ -132,7 +132,14 @@ func (h *Handler) Edit(c *gin.Context) {
 			return
 		}
 
-		_ = h.userService.DeleteImage(authUser.Image)
+		// Delete the old avatar if it exists
+		if authUser.Image != "" {
+			err := h.userService.DeleteImage(authUser.Image)
+			if err != nil {
+				log.Printf("Failed to delete old user avatar: %v\n", err)
+				// Continue with the update even if deletion fails
+			}
+		}
 
 		authUser.Image = url
 	}

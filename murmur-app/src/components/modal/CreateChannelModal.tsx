@@ -48,7 +48,7 @@ function ListItem({ image, label }: Item) {
 				size="sm"
 				src={image}
 			/>
-			<Text textColor="#000">{label}</Text>
+			<Text textColor="#fff">{label}</Text>
 		</Flex>
 	);
 }
@@ -172,6 +172,7 @@ function CreateChannelModal({ guildId, isOpen, onClose }: IProps) {
 											onSelectedItemsChange={(changes) =>
 												handleSelectedItemsChange(changes.selectedItems)
 											}
+											listStyleProps={{ bg: 'brandGray.dark'}}
 										/>
 									</Box>
 								)}

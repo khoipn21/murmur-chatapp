@@ -16,8 +16,8 @@ recreate:
 start:
 	docker start postgres && docker start redis
 
-# test:
-# 	go test -v -cover ./service/... ./handler/...
+test:
+	go test -v -cover ./service/... ./handler/...
 
 lint:
 	golangci-lint run

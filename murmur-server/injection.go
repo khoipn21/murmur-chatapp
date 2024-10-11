@@ -2,13 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
-	"github.com/gin-gonic/gin"
-	cors "github.com/rs/cors/wrapper/gin"
-	"github.com/ulule/limiter/v3"
-	mgin "github.com/ulule/limiter/v3/drivers/middleware/gin"
-	sredis "github.com/ulule/limiter/v3/drivers/store/redis"
 	"log"
 	"murmur-server/config"
 	"murmur-server/handler"
@@ -19,6 +12,14 @@ import (
 	"murmur-server/ws"
 	"net/http"
 	"time"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/redis"
+	"github.com/gin-gonic/gin"
+	cors "github.com/rs/cors/wrapper/gin"
+	"github.com/ulule/limiter/v3"
+	mgin "github.com/ulule/limiter/v3/drivers/middleware/gin"
+	sredis "github.com/ulule/limiter/v3/drivers/store/redis"
 )
 
 func inject(d *dataSources, cfg config.Config) (*gin.Engine, error) {
@@ -134,6 +135,8 @@ func inject(d *dataSources, cfg config.Config) (*gin.Engine, error) {
 		TimeoutDuration: time.Duration(cfg.HandlerTimeOut) * time.Second,
 		MaxBodyBytes:    cfg.MaxBodyBytes,
 	})
+
+	createDefaultAccounts(userService)
 
 	return router, nil
 }

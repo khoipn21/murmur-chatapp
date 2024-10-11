@@ -1,17 +1,17 @@
 package middleware
 
 import (
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"log"
 	"murmur-server/model/apperrors"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 func AuthUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		id := session.Get("userId")
-
 		if id == nil {
 			e := apperrors.NewAuthorization(apperrors.InvalidSession)
 			c.JSON(e.Status(), gin.H{
